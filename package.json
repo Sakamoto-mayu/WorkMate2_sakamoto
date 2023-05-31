@@ -11,7 +11,8 @@
     "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "format": "prettier --write src/",
-    "nodemon": "nodemon server.ts"
+    "nodemon": "nodemon server.ts",
+    "start": "node src/backend/index.js"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.338.0",
