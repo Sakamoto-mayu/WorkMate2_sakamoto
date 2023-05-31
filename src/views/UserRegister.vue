@@ -1,0 +1,215 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+import firebase from '../firebase'
+import axios from 'axios'
+
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth'
+
+const auth = getAuth(firebase)
+
+const name = ref('')
+const email = ref('')
+const password = ref('')
+const errorMessage = ref('')
+const userData = ref([])
+
+// const fetchData = async () => {
+//   const response = await fetch(`http://localhost:8000/GetUser`)
+//   const getData = await response.json()
+//   userData.value = getData
+//   console.log('ゲットユーザー', getData)
+// }
+// onMounted(fetchData)
+
+const submit = async (event: Event) => {
+  event.preventDefault()
+
+  if (email.value === '' || password.value === '' || name.value === '') {
+    if (email.value === '' && password.value === '' && name.value === '') {
+      errorMessage.value = 'フォームを入力してください'
+      return
+    } else if (email.value === '' && name.value === '') {
+      errorMessage.value = '名前とメールアドレスを入力してください'
+      return
+    } else if (password.value === '' && name.value === '') {
+      errorMessage.value = '名前とパスワードを入力してください'
+      return
+    } else if (email.value === '' && password.value === '') {
+      errorMessage.value = 'メールアドレスとパスワードを入力してください'
+      return
+    } else if (email.value === '') {
+      errorMessage.value = 'メールアドレスを入力してください'
+      return
+    } else if (password.value === '') {
+      errorMessage.value = 'パスワードを入力してください'
+      return
+    } else if (name.value === '') {
+      errorMessage.value = '名前を入力してください'
+      return
+    }
+  }
+
+  createUserWithEmailAndPassword(auth, email.value, password.value)
+    //firebase Authentication に登録があればエラーになる
+    .then((userCredential) => {
+      const user = userCredential.user
+      console.log('firebaseユーザー', user)
+      // mongoDBに登録
+      axios
+        .post('http://localhost:3000/userData', {
+          email: email.value,
+          password: password.value,
+          name: name.value
+        })
+        .then((response) => console.log('mongoDBユーザー', response))
+        .catch((err) => console.log(err))
+      // DynamoDBに登録
+      // axios
+      // .put('import.meta.env.VITE_AWS_USERS', {
+      //   email: email.value,
+      //   password: password.value,
+      //   name: name.value
+      // })
+      // .then((response) => console.log(response))
+      // .catch((err) => console.log(err))
+    })
+    .catch((error) => {
+      errorMessage.value = '入力内容が不正です'
+      const errorCode = error.code
+      const errorMsg = error.message
+      console.log(errorCode, errorMsg)
+      return
+    })
+  // const options = {
+  //   method: 'POST',
+  //   headers: {
+  //     'Content-Type': 'application/json'
+  //   },
+  //   body: JSON.stringify({
+  //     name: name.value,
+  //     email: email.value,
+  //     password: password.value
+  //   })
+  // }
+
+  // const result = await fetch(`http://localhost:8000/PostUserRegister`, options)
+  // console.log('ログインリザルト', result)
+}
+</script>
+
+<template>
+    <div class="userRegister" id="userRegister-template">
+      <h2>新規登録</h2>
+      <form @submit="submit">
+        <div class="userRegisterForm">
+          <div class="name">
+            <label for="name">お名前：</label>
+            <input id="name" type="text" v-model="name" name="name" placeholder="お名前" />
+          </div>
+          <div class="email">
+            <label for="email">メールアドレス：</label>
+            <input id="email" type="text" v-model="email" name="email" placeholder="メールアドレス" />
+          </div>
+          <div class="password">
+            <label for="password">パスワード：</label>
+            <input id="password" type="text" v-model="password" name="password" placeholder="パスワード" />
+          </div>
+          <p class="errMsg" v-if="errorMessage">※{{ errorMessage }}</p>
+          <button class="submitButton" type="submit">送信</button>
+        </div>
+      </form>
+    </div>
+  <!-- <div>
+    <p>ここにGETしたデータを表示</p>
+    <p v-for="(user, id) in userData" v-bind:key="id">
+      {{ user }}
+    </p>
+  </div> -->
+</template>
+
+<style scoped>
+.userRegister {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-top: 10px;
+  border-radius: 5px;
+  background-color: #F6E9D8;
+  color: #977A58;
+  /* border: 1px solid #000 */
+}
+
+.userRegisterForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 10px;
+}
+
+.name,
+.email,
+.password {
+  width: 100%;
+  display: flex;
+  margin: 5px 0;
+}
+
+.name label,
+.email label,
+.password label {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  /* border: 1px solid #000; */
+}
+
+.name input,
+.email input,
+.password input {
+  width: 200px;
+}
+
+.name input:focus,
+.email input:focus,
+.password input:focus {
+  outline: 0;
+  box-shadow: 0 0 1px #977A58;
+  border-radius: 5px;
+}
+
+
+.submitButton {
+  width: 130px;
+  height: 30px;
+  cursor: pointer;
+  margin-top: 15px;
+  border: 1px solid #977A58;
+  border-radius: 100vh;
+  background-color: #977A58;
+  color: #fff;
+}
+
+.submitButton:hover {
+  opacity: 0.8;
+}
+
+.errMsg {
+  text-align: center;
+  width: 300px;
+  color: red;
+  font-size: 12px;
+}
+</style>
+
+<!-- <style>
+@media (min-width: 1024px) {
+  .about {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+  }
+}
+</style> -->
