@@ -29,6 +29,9 @@ coverage
 *.sw?
 
 MongoDB/server/data/*
+prisma/*.env
 
 # local env files
 .env*.local
+.env
+*.env
