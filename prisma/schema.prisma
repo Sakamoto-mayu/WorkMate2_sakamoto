@@ -7,15 +7,19 @@ datasource db {
   url      = env("VITE_APP_DATABASE_URL")
 }
 
+model Attendance {
+  id       Int       @id @default(autoincrement())
+  email    String    @unique
+  status   String?
+  clockIn  Int?
+  clockOut Int?
+  break    Int?
+  date     DateTime?
+}
 
-model Attendance{
-  id Int @id @default(autoincrement())
-  email String
-  date String?
-  day String?
-  status String?
-  clockIn String?
-  clockOut String?
-  rest String?
-
+model User {
+  id                       Int     @id @default(autoincrement())
+  email                    String  @unique
+  name                     String?
+  acceptTermsAndConditions Boolean
 }
