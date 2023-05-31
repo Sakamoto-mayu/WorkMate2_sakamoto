@@ -1,4 +1,30 @@
 <script setup lang="ts">
+import Header from './components/Header.vue'
+import Footer from './components/Footer.vue';
+
+</script>
+
+<template>
+  <Header />
+  <div id="app">
+    <RouterView />
+  </div>
+  <Footer />
+</template>
+
+<style>
+#app {
+  width: max-content;
+  height: max-content;
+  display: flex;
+  flex-direction: column;
+  margin: 30px auto;
+  /* border: 1px solid #000 */
+}
+</style>
+
+
+<!-- <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from './components/HelloWorld.vue'
 </script>
@@ -13,6 +39,7 @@ import HelloWorld from './components/HelloWorld.vue'
       <nav>
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
+        <RouterLink to="/registerTest">registerTest</RouterLink>
       </nav>
     </div>
   </header>
@@ -82,4 +109,4 @@ nav a:first-of-type {
     margin-top: 1rem;
   }
 }
-</style>
+</style> -->
