@@ -1,31 +1,44 @@
-<script lang="ts">
-export default {
-    data() {
-        return {
-            now: "",
-            today: "",
-        };
-    },
-    mounted() {
-        this.updateTime();
-        setInterval(this.updateTime, 1000); // 1秒ごとに時間を更新
-        const date = new Date();
-        const week = date.getDay()
-        const weekItems = ['日', '月', '火', '水', '木', '金', '土'];
-        const dayOfWeek = weekItems[week];
-        this.today = date.getFullYear() + '年' + (date.getMonth() + 1) + '月' + date.getDate() + '日' + "(" + dayOfWeek +")"
+<script setup lang="ts">
+// export default {
+//     data() {
+//         return {
+//             now: "",
+//             today: "",
+//         };
+//     },
+//     mounted() {
+//         this.updateTime();
+//         setInterval(this.updateTime, 1000); // 1秒ごとに時間を更新
+//         const date = new Date();
+//         const week = date.getDay()
+//         const weekItems = ['日', '月', '火', '水', '木', '金', '土'];
+//         const dayOfWeek = weekItems[week];
+//         this.today = date.getFullYear() + '年' + (date.getMonth() + 1) + '月' + date.getDate() + '日' + "(" + dayOfWeek +")"
 
-    },
-    methods: {
-        updateTime() {
-            this.now = new Date().toLocaleTimeString();
-        },
-    },
-};
+//     },
+//     methods: {
+//         updateTime() {
+//             this.now = new Date().toLocaleTimeString();
+//         },
+//     },
+// };
 
-// const data = new Date();
-// const today = data.getFullYear() + '年' + (data.getMonth() + 1) + '月' + data.getDate() + '日'
-// console.log(today);
+// 日付
+const today = new Date();
+const week = today.getDay();
+const days = ['日', '月', '火', '水', '木', '金', '土'];
+const dayOfWeek = '(' + days[week] + ')';
+console.log(dayOfWeek);
+const currentDate = today.getFullYear() + '年' + (today.getMonth() + 1) + '月' + today.getDate() + '日' + dayOfWeek
+// 現在時刻
+const time = new Date().toLocaleTimeString();
+//     setInterval(time.updateTime, 1000);
+console.log(time);
+const updateTime = () => {
+    const time = new Date().toLocaleTimeString();
+    console.log(time);
+}
+// setInterval(updateTime, 1000)
 
 </script>
 <template>
@@ -38,10 +51,10 @@ export default {
             </thead>
             <tbody>
                 <tr>
-                    <td class="today">{{ today }}</td>
+                    <td class="today">{{ currentDate }}</td>
                 </tr>
                 <tr>
-                    <td class="now">{{ now }}</td>
+                    <td class="now">{{ time }}</td>
                 </tr>
             </tbody>
         </table>
@@ -59,6 +72,7 @@ export default {
 thead tr {
     height: 25px;
 }
+
 tbody tr {
     height: 50px;
     color: #977A58;

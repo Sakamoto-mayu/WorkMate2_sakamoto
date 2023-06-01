@@ -10,9 +10,9 @@ const prisma = new PrismaClient()
 // middleware that is specific to this router
 router.post('/', async (req: Request, res: Response) => {
   console.log(req.body)
-  const { email, date, day, status, clockIn, clockOut, rest } = req.body
+  const { email, month, date, day, status, clockIn, clockOut, rest } = req.body
   try {
-    const dayWork = await prisma.attendance.create({ data: { email, date, day, status, clockIn, clockOut, rest } })
+    const dayWork = await prisma.attendance.create({ data: { email, month, date, day, status, clockIn, clockOut, rest } })
     return res.json({ dayWork })
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
