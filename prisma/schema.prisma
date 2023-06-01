@@ -8,18 +8,13 @@ datasource db {
 }
 
 model Attendance {
-  id       Int       @id @default(autoincrement())
-  email    String    @unique
+  id       Int     @id @default(autoincrement())
+  email    String
+  month    String?
+  date     String?
+  day      String?
   status   String?
-  clockIn  Int?
-  clockOut Int?
-  break    Int?
-  date     DateTime?
-}
-
-model User {
-  id                       Int     @id @default(autoincrement())
-  email                    String  @unique
-  name                     String?
-  acceptTermsAndConditions Boolean
+  clockIn  String?
+  clockOut String?
+  rest     String?
 }

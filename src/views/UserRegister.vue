@@ -11,15 +11,6 @@ const name = ref('')
 const email = ref('')
 const password = ref('')
 const errorMessage = ref('')
-const userData = ref([])
-
-// const fetchData = async () => {
-//   const response = await fetch(`http://localhost:8000/GetUser`)
-//   const getData = await response.json()
-//   userData.value = getData
-//   console.log('ゲットユーザー', getData)
-// }
-// onMounted(fetchData)
 
 const submit = async (event: Event) => {
   event.preventDefault()
@@ -80,20 +71,6 @@ const submit = async (event: Event) => {
       console.log(errorCode, errorMsg)
       return
     })
-  // const options = {
-  //   method: 'POST',
-  //   headers: {
-  //     'Content-Type': 'application/json'
-  //   },
-  //   body: JSON.stringify({
-  //     name: name.value,
-  //     email: email.value,
-  //     password: password.value
-  //   })
-  // }
-
-  // const result = await fetch(`http://localhost:8000/PostUserRegister`, options)
-  // console.log('ログインリザルト', result)
 }
 </script>
 
@@ -106,6 +83,13 @@ const submit = async (event: Event) => {
             <label for="name">お名前：</label>
             <input id="name" type="text" v-model="name" name="name" placeholder="お名前" />
           </div>
+          <div class="department">
+            <label for="department">部署：</label>
+            <select>
+              <option>部署名</option><!--demartmentテーブルから部署名を取得して表示する-->
+            </select>
+          </div>
+
           <div class="email">
             <label for="email">メールアドレス：</label>
             <input id="email" type="text" v-model="email" name="email" placeholder="メールアドレス" />
@@ -119,12 +103,6 @@ const submit = async (event: Event) => {
         </div>
       </form>
     </div>
-  <!-- <div>
-    <p>ここにGETしたデータを表示</p>
-    <p v-for="(user, id) in userData" v-bind:key="id">
-      {{ user }}
-    </p>
-  </div> -->
 </template>
 
 <style scoped>
@@ -149,6 +127,7 @@ const submit = async (event: Event) => {
 }
 
 .name,
+.department,
 .email,
 .password {
   width: 100%;
@@ -157,22 +136,26 @@ const submit = async (event: Event) => {
 }
 
 .name label,
+.department label,
 .email label,
 .password label {
   flex-grow: 1;
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  margin-right: 0px
   /* border: 1px solid #000; */
 }
 
 .name input,
+.department select,
 .email input,
 .password input {
   width: 200px;
 }
 
 .name input:focus,
+.department select:focus,
 .email input:focus,
 .password input:focus {
   outline: 0;

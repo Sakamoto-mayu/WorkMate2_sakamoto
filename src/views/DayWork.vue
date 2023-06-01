@@ -20,6 +20,7 @@ const restHour = ref('');
 const restMin = ref('');
 const rest = ref('');
 
+// const month = ref('');
 const date = ref('');
 const email = ref(currentUserEmail);
 const status = ref('');
@@ -29,8 +30,8 @@ const errMsg = ref('');
 const checkEmailAndDate = async () => {
     const response = await fetch(`http://localhost:8000/GetAttendanceData`)
     const attendanceData = await response.json();
-    console.log(attendanceData);
-    console.log(date.value)
+    // console.log(attendanceData);
+    
     // 勤怠データからemailとdateの値を取り出す
     const newArray = attendanceData.map((item: any) => ({ email: item.email, date: item.date }))
     // console.log(newArray)
@@ -45,9 +46,14 @@ const checkEmailAndDate = async () => {
 }
 
 const submitDayWorkData = async (e: Event) => {
-    // dateの値から曜日を取得する
     const selectedDate = new Date(date.value);
     // console.log(selectedDate);
+    
+    // dateの値から月を取得する
+    const month = String(selectedDate.getMonth() + 1);
+    console.log(month);
+    
+    // dateの値から曜日を取得する
     const days = ['日', '月', '火', '水', '木', '金', '土'];
     const dayOfWeek = days[selectedDate.getDay()]
 
@@ -64,11 +70,23 @@ const submitDayWorkData = async (e: Event) => {
     // console.log(rest.value)
 
     e.preventDefault()
-    if (clockIn.value === '' || clockOut.value === '' || date.value === '' || dayOfWeek === '' || status.value === '' || rest.value === '') {
-        errMsg.value = '※未入力箇所があります';
-        return;
-    } else {
-        errMsg.value = '';
+    if (status.value !== '欠勤') {
+        if (clockIn.value === '' || clockOut.value === '' || date.value === '' || dayOfWeek === '' || status.value === '' || rest.value === '') {
+            errMsg.value = '※未入力箇所があります';
+            return;
+        } else {
+            errMsg.value = '';
+        }
+    } else if (status.value === '欠勤') {
+        if (date.value === '') {
+            errMsg.value = '※日付を入力してください'
+            return;
+        } else {
+            // 欠勤を登録する時は、日付以外の値を'-'にする
+            clockIn.value = '-';
+            clockOut.value = '-';
+            rest.value = '-';
+        }
     }
     // 既にemailとdateが存在する場合（isDataExist = true）はPOSTさせない
     const isDataExist = await checkEmailAndDate();
@@ -85,6 +103,7 @@ const submitDayWorkData = async (e: Event) => {
         },
         body: JSON.stringify({
             email: email.value,
+            month: month,
             date: date.value,
             day: dayOfWeek,
             status: status.value,
@@ -175,10 +194,10 @@ const submitDayWorkData = async (e: Event) => {
                     </div>
                 </div>
                 <div class="row">
-                    <div class="label">
-                        <label for="">休憩時間</label>
+                    <div class="label" id="rest">
+                        <label for="rest">休憩時間</label>
                     </div>
-                    <div class="content">
+                    <div class="content" id="rest">
                         <select v-model="restHour">
                             <option value="1">1</option>
                             <option value="2">2</option>
@@ -236,6 +255,7 @@ const submitDayWorkData = async (e: Event) => {
     padding: 5px;
     width: 100px;
     border: 1px solid #000;
+    border-bottom: none;
 }
 
 .content {
@@ -243,7 +263,12 @@ const submitDayWorkData = async (e: Event) => {
     justify-content: left;
     padding: 5px;
     width: 500px;
-    border: 1px solid #000;
+    border-top: 1px solid #000;
+    border-right: 1px solid #000
+}
+
+#rest {
+    border-bottom: 1px solid #000;
 }
 
 .button {
