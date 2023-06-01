@@ -65,7 +65,7 @@ const submit = async (event: Event) => {
         .catch((err) => console.log(err))
       // DynamoDBに登録
       // axios
-      // .put('import.meta.env.VITE_AWS_USERS', {
+      // .put(`https://td2a0be3bj.execute-api.us-east-2.amazonaws.com/users`, {
       //   email: email.value,
       //   password: password.value,
       //   name: name.value
