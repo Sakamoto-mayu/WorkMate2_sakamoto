@@ -18,3 +18,32 @@ model Attendance {
   clockOut String?
   rest     String?
 }
+
+model leave_balance{
+  user_email String @id
+  paid_leave Int
+  harfday_leave Int
+  special_leave Int
+}
+
+model approval_status{
+user_email String @id
+admin Boolean
+gm Boolean
+delete Boolean
+}
+
+model department{
+Id Int @id
+department_name String
+}
+
+model role{
+Id Int @id
+role_name String
+}
+
+model attendance_types{
+Id Int @id
+status_name String
+}
