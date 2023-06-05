@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import MonthlyTable from '../components/month/MonthlyTable.vue';
+import MonthlyTable from '../components/month/MonthlyTable.vue'
 </script>
 
 <template>
-    <MonthlyTable />
+  <MonthlyTable />
 </template>
 
-<style>
-</style>
+<style></style>
