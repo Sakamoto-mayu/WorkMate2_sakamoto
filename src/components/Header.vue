@@ -1,5 +1,5 @@
 <template>
-  <header v-if="$route.path !== '/login'"> <!-- ログイン画面のみheader非表示-->
+  <header v-if="$route.path !== '/login' && $route.path !== '/userRegister'"> <!-- ログイン画面のみheader非表示-->
     <nav class="nav">
       <button type="button" @click="goToTop">TOP</button>
       <button type="button" @click="goToDayWorkPage">日次勤怠</button>

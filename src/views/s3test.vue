@@ -9,9 +9,9 @@ import Run from '../lib/ddb_query'
 
 const selectedFile = ref<File | null>(null)
 
-const calender = getCalendarArray(2023, 6)
+// const calender = getCalendarArray(2023, 6)
 
-console.log(calender)
+// console.log(calender)
 
 // Run()
 
@@ -74,11 +74,11 @@ const handleFileChange = (event: Event) => {
 }
 
 const uploadCsv = async () => {
-  const file = selectedFile.value
-  if (!file) {
-    console.error('ファイルが選択されていません。')
-    return
-  }
+  // const file = selectedFile.value
+  // if (!file) {
+  //   console.error('ファイルが選択されていません。')
+  //   return
+  // }
   // await axios
   //   .put('https://td2a0be3bj.execute-api.us-east-2.amazonaws.com/s3', {
   //     Bucket: 'workmate-s3',
@@ -88,14 +88,29 @@ const uploadCsv = async () => {
   //   })
   //   .then((res) => console.log(res))
   //   .catch((err) => console.log(err))
-  await axios
-    .put('https://td2a0be3bj.execute-api.us-east-2.amazonaws.com/s3', {
-      Key: file.name,
-      Body: file,
-      ContentType: 'text/csv'
-    })
-    .then((res) => console.log(res))
-    .catch((err) => console.log(err))
+
+  // S3 from DynamoDB
+  // await axios
+  //   .put('https://td2a0be3bj.execute-api.us-east-2.amazonaws.com/s3', {
+  //     // Key: file.name,
+  //     month: '5'
+  //     // Body: file,
+  //     // ContentType: 'text/csv'
+  //   })
+  //   .then((res) => console.log(res))
+  //   .catch((err) => console.log(err))
+
+  // get data from DynamoDB
+  // await axios
+  //   .post('https://td2a0be3bj.execute-api.us-east-2.amazonaws.com/daywork', {
+  //     month: '5',
+  //     email: 'rakus@example.com',
+  //     status: '有給',
+  //     department: '総務'
+  //   })
+  //   .then((res) => console.log(res.data.Items))
+  //   .catch((err) => console.log(err))
+
   // try {
   //   const file = selectedFile.value
   //   if (!file) {
