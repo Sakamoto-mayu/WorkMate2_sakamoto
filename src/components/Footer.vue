@@ -1,5 +1,5 @@
 <template>
-    <footer v-if="$route.path !== '/login'">
+    <footer>
         <div class="copyright">© 2023 WorkMate Inc. All Rights Reserved.</div>
     </footer>
 </template>

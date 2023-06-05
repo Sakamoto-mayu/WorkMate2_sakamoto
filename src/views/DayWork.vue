@@ -112,8 +112,29 @@ const submitDayWorkData = async (e: Event) => {
             rest: rest.value
         })
     }
+
     const result = await fetch('http://localhost:8000/PostDayWork', options)
     console.log('success', result)
+
+    // DynamoDB へ登録
+    const options2 = {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            email: email.value,
+            month: month,
+            date: date.value,
+            day: dayOfWeek,
+            status: status.value,
+            clockIn: clockIn.value,
+            clockOut: clockOut.value,
+            rest: rest.value
+        })
+    }
+    await fetch('https://td2a0be3bj.execute-api.us-east-2.amazonaws.com/daywork',options2)
+
 }
 
 </script>
