@@ -25,6 +25,8 @@ URL は絶対パスでもいけるはず
 
 `use userData` で userDataDB を作成・移動。
 
+`db.users.drop()`で　コレクションを初期化
+
 `db.createCollection('users')` で users コレクションを作成。<br>
 `show collections` で作成済みのコレクション一覧を取得できる。
 

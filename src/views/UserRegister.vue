@@ -2,15 +2,22 @@
 import { ref } from 'vue'
 import firebase from '../firebase'
 import axios from 'axios'
+import { useRouter } from 'vue-router'
 
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth'
 
 const auth = getAuth(firebase)
 
+const router = useRouter()
+
 const name = ref('')
 const email = ref('')
 const password = ref('')
 const errorMessage = ref('')
+
+const goToLogin = async () => {
+  router.push('/login')
+}
 
 const submit = async (event: Event) => {
   event.preventDefault()
@@ -50,13 +57,15 @@ const submit = async (event: Event) => {
         .post('http://localhost:3000/userData', {
           email: email.value,
           password: password.value,
-          name: name.value
+          name: name.value,
+          // department: department.value,
+          role:"member"
         })
         .then((response) => console.log('mongoDBユーザー', response))
         .catch((err) => console.log(err))
       // DynamoDBに登録
       // axios
-      // .put('import.meta.env.VITE_AWS_USERS', {
+      // .put(`https://td2a0be3bj.execute-api.us-east-2.amazonaws.com/users`, {
       //   email: email.value,
       //   password: password.value,
       //   name: name.value
@@ -102,6 +111,7 @@ const submit = async (event: Event) => {
           <button class="submitButton" type="submit">送信</button>
         </div>
       </form>
+      <button class="submitButton" type="button" @click="goToLogin">ログイン画面へ</button>
     </div>
 </template>
 
@@ -111,7 +121,7 @@ const submit = async (event: Event) => {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding-top: 10px;
+  padding: 10px 0;;
   border-radius: 5px;
   background-color: #F6E9D8;
   color: #977A58;

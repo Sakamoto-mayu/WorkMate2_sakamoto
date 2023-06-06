@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 
 import firebase from '../firebase'
 import { getAuth } from 'firebase/auth'
+import axios from 'axios'
 
 const auth = getAuth(firebase)
 const currentUserEmail = auth.currentUser?.email
@@ -25,6 +26,8 @@ const date = ref('')
 const email = ref(currentUserEmail)
 const status = ref('')
 const errMsg = ref('')
+
+const department = ref('')
 
 // 取得した勤怠データ（email,date）と入力値を比較する
 const checkEmailAndDate = async () => {
@@ -50,6 +53,18 @@ const checkEmailAndDate = async () => {
 const submitDayWorkData = async (e: Event) => {
   const selectedDate = new Date(date.value)
   // console.log(selectedDate);
+
+  //departmentを取得
+  axios
+    .get('http://localhost:3000/userData', { params: { email: currentUserEmail } })
+    .then((response) => {
+      // const department = response.data[0].department
+      department.value = response.data[0].department
+      console.log(response)
+    })
+    .catch((err) => {
+      console.log(err)
+    })
 
   // dateの値から月を取得する
   const month = String(selectedDate.getMonth() + 1)
@@ -121,8 +136,31 @@ const submitDayWorkData = async (e: Event) => {
       rest: rest.value
     })
   }
+
   const result = await fetch('http://localhost:8000/PostDayWork', options)
   console.log('success', result)
+
+  // DynamoDB へ登録
+  //   const options2 = {
+  //     method: 'PUT',
+  //     headers: {
+  //       'Content-Type': 'application/json'
+  //     },
+  //     body: JSON.stringify({
+  //       email: email.value,
+  //       month: month,
+  //       date: date.value,
+  //       day: dayOfWeek,
+  //       status: status.value,
+  //       clockIn: clockIn.value,
+  //       clockOut: clockOut.value,
+  //       rest: rest.value,
+  //       admin: false,
+  //       gm: false,
+  //       department: department.value
+  //     })
+  //   }
+  //   await fetch('https://td2a0be3bj.execute-api.us-east-2.amazonaws.com/daywork', options2)
 }
 </script>
 

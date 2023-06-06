@@ -9,41 +9,41 @@ datasource db {
 
 model Attendance {
   id       Int     @id @default(autoincrement())
-  email    String
-  month    String?
   date     String?
-  day      String?
-  status   String?
   clockIn  String?
   clockOut String?
+  email    String
+  status   String?
+  day      String?
   rest     String?
+  month    String?
 }
 
-model leave_balance{
-  user_email String @id
-  paid_leave Int
+model leave_balance {
+  user_email    String @id
+  paid_leave    Int
   harfday_leave Int
   special_leave Int
 }
 
-model approval_status{
-user_email String @id
-admin Boolean
-gm Boolean
-delete Boolean
+model approval_status {
+  user_email String  @id
+  admin      Boolean
+  gm         Boolean
+  delete     Boolean
 }
 
-model department{
-Id Int @id
-department_name String
+model department {
+  Id              Int    @id
+  department_name String
 }
 
-model role{
-Id Int @id
-role_name String
+model role {
+  Id        Int    @id
+  role_name String
 }
 
-model attendance_types{
-Id Int @id
-status_name String
+model attendance_types {
+  Id          Int    @id
+  status_name String
 }
