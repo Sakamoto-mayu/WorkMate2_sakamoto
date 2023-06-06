@@ -80,7 +80,7 @@ const submit = async (event: Event) => {
       <form @submit="submit">
         <div class="userRegisterForm">
           <div class="name">
-            <label for="name">お名前：</label>
+            <label for="name">ユーザー名：</label>
             <input id="name" type="text" v-model="name" name="name" placeholder="お名前" />
           </div>
           <div class="department">
