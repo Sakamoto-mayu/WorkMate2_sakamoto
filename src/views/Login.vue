@@ -16,6 +16,7 @@
         <button class="login-button" @click="login">ログイン</button>
       </div>
     </form>
+    <button class="login-button" @click="goToUserRegister">ユーザー登録へ</button>
   </div>
 </template>
 
@@ -43,6 +44,10 @@ const errorMessage = ref('')
 
 const handleSubmit = (event: any) => {
   event.preventDefault() // フォームが送信されたときにページがリロードされないようにする
+}
+
+const goToUserRegister = async () => {
+  router.push('/userRegister')
 }
 
 const login = () => {
@@ -99,7 +104,7 @@ const login = () => {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding-top: 10px;
+  padding: 10px 0;
   border-radius: 5px;
   background-color: #F6E9D8;
   color: #977A58;

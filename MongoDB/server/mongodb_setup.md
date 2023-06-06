@@ -25,23 +25,21 @@ URL は絶対パスでもいけるはず
 
 `use userData` で userDataDB を作成・移動。
 
+`db.users.drop()`で　コレクションを初期化
 
 `db.createCollection('users')` で users コレクションを作成。<br>
 `show collections` で作成済みのコレクション一覧を取得できる。
 
-
 `db.users.createIndex({ email: 1 }, { name: 'IX_EMAIL', unique: true })`<br>
 を実行し email をユニークキーに設定。
 
-
-`db.users.insert({email: "rakus@example.com",password: "rakus123",name: "ラクス太郎"})`<br>
+`db.users.insertMany([{email: "rakus@example.com",password: "rakus123",name: "ラクス太郎",department:"総務",role:"GM"},{email: "admin@example.com",password: "admin123",name: "ラクス次郎",department:"人事",role:"admin"},{email: "member@example.com",password: "member123",name: "ラクス三郎",department:"人事",role:"member"}])`<br>
 を実行しサンプルデータを挿入。<br>
-`db.users.find()`でコレクション内のデータを取得できる。
-
+`db.users.find().pretty()`でコレクション内のデータを取得できる。
 
 上記の手順で作成後、次回以降の起動時は下記のコマンドで起動、直接 DB にアクセスできます。<br>
 `mongo 127.0.0.1:27017/userData`
 
-
 ## アプリと接続する
-`npm start`でlocalhost:3000でmongoDBとの接続が開始されます。
+
+`npm start`で localhost:3000 で mongoDB との接続が開始されます。

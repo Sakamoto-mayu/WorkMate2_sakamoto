@@ -11,14 +11,15 @@
     "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "format": "prettier --write src/",
-    "nodemon": "nodemon server.ts"
+    "nodemon": "nodemon server.ts",
+    "start": "node src/backend/index.js"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.338.0",
     "@aws-sdk/client-s3": "^3.337.0",
     "@aws-sdk/lib-dynamodb": "^3.338.0",
     "@aws-sdk/util-dynamodb": "^3.338.0",
-    "@prisma/client": "^4.14.0",
+    "@prisma/client": "^4.15.0",
     "@types/js-cookie": "^3.0.3",
     "@types/mongoose": "^5.11.97",
     "aws-sdk": "^2.1382.0",
