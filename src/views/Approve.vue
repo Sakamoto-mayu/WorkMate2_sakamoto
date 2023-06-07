@@ -12,7 +12,6 @@ import axios from 'axios'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
-const department = ref('')
 
 // ログインユーザーのemail取得
 function getEmail() {
@@ -23,37 +22,95 @@ function getEmail() {
 const userEmail = getEmail()
 console.log('ユーザー：', userEmail)
 
+const name = ref('')
+const department = ref('')
+const role = ref('')
+const dataLists = ref([])
+
 // ログインユーザーの情報取得
-async function getUserData() {
+async function checkUser() {
   try {
     const response = await axios.get('http://localhost:3000/userData', {
       params: { email: userEmail }
     })
     department.value = response.data[0].department
-    const data = response.data[0]
-    console.log('getUserData', data)
-    return data
+    role.value = response.data[0].role
+    name.value = response.data[0].name
   } catch (err) {
     console.log(err)
+  }
+
+  // ログインユーザーがGMまたはadminの場合トップへ戻る
+  async function checkRole() {
+    try {
+      if (role.value !== 'GM' && role.value !== 'admin') {
+        alert('権限者のみ閲覧可能です')
+        router.push('/')
+      } else {
+        return
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  }
+  checkRole()
+}
+checkUser()
+
+//   DynamoDB から取得
+async function getBeforeAdmin() {
+  await checkUser()
+  if (role.value === 'admin') {
+    const response = await fetch('https://td2a0be3bj.execute-api.us-east-2.amazonaws.com/daywork', {
+      method: 'POST',
+      body: JSON.stringify({
+        admin: false,
+        gm: false,
+        department: department.value
+      })
+    })
+    const result = await response.json()
+    console.log('adminリザルト', result)
+    console.log('ロール', role.value)
+    return result
+  } else if (role.value === 'GM') {
+    const response = await fetch('https://td2a0be3bj.execute-api.us-east-2.amazonaws.com/daywork', {
+      method: 'POST',
+      body: JSON.stringify({
+        admin: true,
+        gm: false,
+        department: department.value
+      })
+    })
+    const result = await response.json()
+    console.log('GMリザルト', result)
+    console.log('ロール', role.value)
+    return result
   }
 }
 
-// ログインユーザーがGMまたはadminの場合トップへ戻る
-async function checkRole() {
-  try {
-    const data = await getUserData()
-    const role = data.role
-    if (role !== 'GM' && role !== 'admin') {
-      alert('権限者のみ閲覧可能です')
-      router.push('/')
-    } else {
-      return
-    }
-  } catch (err) {
-    console.log(err)
-  }
+// 画面表示用
+onMounted(async () => {
+  const workData = await getBeforeAdmin()
+  console.log(workData.Items)
+  dataLists.value = workData.Items
+})
+
+// 承認ボタン
+const approveWork = async () => {
+  const response = await fetch('https://td2a0be3bj.execute-api.us-east-2.amazonaws.com/daywork', {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      admin: true,
+      gm: true
+    })
+  })
+  const result = await response.json()
+  console.log('approveWork', result)
 }
-checkRole()
 </script>
 
 <template>
@@ -63,64 +120,64 @@ checkRole()
       <div class="label">
         <label for="date">申請者</label>
       </div>
-      <div class="content" v-for="(value, index) in dateArray" :key="index">
-        <p>{{ value }}</p>
+      <div class="content" v-for="(list, index) in dataLists" :key="index">
+        <p>{{ list.day }}</p>
       </div>
     </div>
     <div class="colum" id="colum">
       <div class="label">
         <label for="date">日付</label>
       </div>
-      <div class="content" v-for="(value, index) in dateArray" :key="index">
-        <p>{{ value }}</p>
+      <div class="content" v-for="(list, index) in dataLists" :key="index">
+        <p>{{ list.date }}</p>
       </div>
     </div>
     <div class="colum" id="colum">
       <div class="label">
         <label for="date">曜日</label>
       </div>
-      <div class="content" v-for="(value, index) in dayArray" :key="index">
-        <p>{{ value }}</p>
+      <div class="content" v-for="(list, index) in dataLists" :key="index">
+        <p>{{ list.day }}</p>
       </div>
     </div>
     <div class="colum" id="colum">
       <div class="label">
-        <label for="status">出欠</label>
+        <label for="date">出欠</label>
       </div>
-      <div class="content" v-for="(value, index) in dateArray" :key="index">
-        <p>{{ getStatus(value) }}</p>
-      </div>
-    </div>
-    <div class="colum" id="colum">
-      <div class="label">
-        <label for="clockIn">始業時刻</label>
-      </div>
-      <div class="content" v-for="(value, index) in dateArray" :key="index">
-        <p>{{ getClockIn(value) }}</p>
+      <div class="content" v-for="(list, index) in dataLists" :key="index">
+        <p>{{ list.status }}</p>
       </div>
     </div>
     <div class="colum" id="colum">
       <div class="label">
-        <label for="clockOut">終業時刻</label>
+        <label for="date">始業時刻</label>
       </div>
-      <div class="content" v-for="(value, index) in dateArray" :key="index">
-        <p>{{ getClockOut(value) }}</p>
-      </div>
-    </div>
-    <div class="colum" id="colum">
-      <div class="label">
-        <label for="rest">休憩</label>
-      </div>
-      <div class="content" id="content" v-for="(value, index) in dateArray" :key="index">
-        <p>{{ getRest(value) }}</p>
+      <div class="content" v-for="(list, index) in dataLists" :key="index">
+        <p>{{ list.clockIn }}</p>
       </div>
     </div>
     <div class="colum" id="colum">
       <div class="label">
-        <label for="rest">承認</label>
+        <label for="date">終業時刻</label>
       </div>
-      <div class="content" id="content" v-for="(value, index) in dateArray" :key="index">
-        <p>{{ getRest(value) }}</p>
+      <div class="content" v-for="(list, index) in dataLists" :key="index">
+        <p>{{ list.clockOut }}</p>
+      </div>
+    </div>
+    <div class="colum" id="colum">
+      <div class="label">
+        <label for="date">休憩</label>
+      </div>
+      <div class="content" v-for="(list, index) in dataLists" :key="index">
+        <p>{{ list.rest }}</p>
+      </div>
+    </div>
+    <div class="colum" id="colum">
+      <div class="label">
+        <label for="date">承認</label>
+      </div>
+      <div class="content" v-for="(list, index) in dataLists" :key="index">
+        <button @click="approveWork(index)">承認</button>
       </div>
     </div>
   </div>
