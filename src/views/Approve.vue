@@ -1,12 +1,20 @@
 <script setup lang="ts">
 // 1.ログイン時にログインユーザーのemail情報をどこかに保持
-// 2.承認画面アクセス時に、emailをキーにログインユーザーの権限・部署を取得(monogoDB)
+// 2.承認画面アクセス時に、emailをキーにログインユーザーの権限・部署を取得(monogoDB)→display表示、できればモーダル
 // 3.部署 & statusで絞り込みして、申請情報を取得(DynamoDB)
 // 4.名前(mongoDBから取得)、申請情報を表示
 
+import { ref, onMounted } from 'vue'
+
 import firebase from '../firebase'
 import { getAuth } from 'firebase/auth'
+import axios from 'axios'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
+const department = ref('')
+
+// ログインユーザーのemail取得
 function getEmail() {
   const auth = getAuth(firebase)
   const currentUserEmail = auth.currentUser?.email
@@ -14,10 +22,41 @@ function getEmail() {
 }
 const userEmail = getEmail()
 console.log('ユーザー：', userEmail)
+
+// ログインユーザーの情報取得
+async function getUserData() {
+  try {
+    const response = await axios.get('http://localhost:3000/userData', {
+      params: { email: userEmail }
+    })
+    department.value = response.data[0].department
+    const data = response.data[0]
+    console.log('getUserData', data)
+    return data
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+// ログインユーザーがGMまたはadminの場合トップへ戻る
+async function checkRole() {
+  try {
+    const data = await getUserData()
+    const role = data.role
+    if (role !== 'GM' && role !== 'admin') {
+      alert('権限者のみ閲覧可能です')
+      router.push('/')
+    } else {
+      return
+    }
+  } catch (err) {
+    console.log(err)
+  }
+}
+checkRole()
 </script>
 
 <template>
-  <p>ユーザー：{{ userEmail }}</p>
   <h2 class="pageTitle">勤怠承認</h2>
   <div class="table">
     <div class="colum" id="colum">
