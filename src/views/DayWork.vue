@@ -141,7 +141,7 @@ const submitDayWorkData = async (e: Event) => {
   console.log('success', result)
 
   // DynamoDB へ登録
-  //   const options2 = {
+  //   await fetch('https://td2a0be3bj.execute-api.us-east-2.amazonaws.com/daywork', {
   //     method: 'PUT',
   //     headers: {
   //       'Content-Type': 'application/json'
@@ -159,8 +159,7 @@ const submitDayWorkData = async (e: Event) => {
   //       gm: false,
   //       department: department.value
   //     })
-  //   }
-  //   await fetch('https://td2a0be3bj.execute-api.us-east-2.amazonaws.com/daywork', options2)
+  //   })
 }
 </script>
 
