@@ -97,15 +97,32 @@ onMounted(async () => {
 })
 
 // 承認ボタン
-const approveWork = async () => {
+const approveWork = async (list) => {
+  let admin, gm
+  if (list.admin === true) {
+    admin = list.admin
+    gm = !list.gm
+  } else {
+    admin = !list.admin
+    gm = list.gm
+  }
   const response = await fetch('https://td2a0be3bj.execute-api.us-east-2.amazonaws.com/daywork', {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      admin: true,
-      gm: true
+      email: list.email,
+      month: list.month,
+      date: list.date,
+      day: list.day,
+      status: list.status,
+      clockIn: list.clockIn,
+      clockOut: list.clockOut,
+      rest: list.rest,
+      admin: admin,
+      gm: gm,
+      department: list.department
     })
   })
   const result = await response.json()
@@ -177,7 +194,7 @@ const approveWork = async () => {
         <label for="date">承認</label>
       </div>
       <div class="content" v-for="(list, index) in dataLists" :key="index">
-        <button @click="approveWork(index)">承認</button>
+        <button @click="approveWork(list)">承認</button>
       </div>
     </div>
   </div>
