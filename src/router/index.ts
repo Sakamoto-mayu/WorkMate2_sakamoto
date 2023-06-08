@@ -102,6 +102,11 @@ const router = createRouter({
       name: '勤怠承認',
       component: () => import('../views/Approve.vue'),
       meta: { requiresAuth: true }
+    },
+    {
+      path: '/approvalHistory',
+      name: '承認履歴',
+      component: () => import('../views/ApprovalHistory.vue')
     }
   ]
 })
