@@ -1,27 +1,5 @@
 <script setup lang="ts">
-// export default {
-//     data() {
-//         return {
-//             now: "",
-//             today: "",
-//         };
-//     },
-//     mounted() {
-//         this.updateTime();
-//         setInterval(this.updateTime, 1000); // 1秒ごとに時間を更新
-//         const date = new Date();
-//         const week = date.getDay()
-//         const weekItems = ['日', '月', '火', '水', '木', '金', '土'];
-//         const dayOfWeek = weekItems[week];
-//         this.today = date.getFullYear() + '年' + (date.getMonth() + 1) + '月' + date.getDate() + '日' + "(" + dayOfWeek +")"
-
-//     },
-//     methods: {
-//         updateTime() {
-//             this.now = new Date().toLocaleTimeString();
-//         },
-//     },
-// };
+import { ref, onMounted } from 'vue';
 
 // 日付
 const today = new Date();
@@ -30,17 +8,19 @@ const days = ['日', '月', '火', '水', '木', '金', '土'];
 const dayOfWeek = '(' + days[week] + ')';
 console.log(dayOfWeek);
 const currentDate = today.getFullYear() + '年' + (today.getMonth() + 1) + '月' + today.getDate() + '日' + dayOfWeek
+
 // 現在時刻
-const time = new Date().toLocaleTimeString();
-//     setInterval(time.updateTime, 1000);
-console.log(time);
-const updateTime = () => {
-    const time = new Date().toLocaleTimeString();
-    console.log(time);
-}
-// setInterval(updateTime, 1000)
+const currentTime = ref(new Date().toLocaleTimeString());
+
+onMounted(() => {
+    // 現在時刻を１秒ごとに更新して表示する
+    setInterval(() => {
+        currentTime.value = new Date().toLocaleTimeString();
+    }, 1000);
+})
 
 </script>
+
 <template>
     <div class="wrap" id="app">
         <table border="1" style="border-collapse: collapse">
@@ -54,7 +34,7 @@ const updateTime = () => {
                     <td class="today">{{ currentDate }}</td>
                 </tr>
                 <tr>
-                    <td class="now">{{ time }}</td>
+                    <td class="now">{{ currentTime }}</td>
                 </tr>
             </tbody>
         </table>

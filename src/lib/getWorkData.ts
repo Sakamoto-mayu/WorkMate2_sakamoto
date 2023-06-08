@@ -8,7 +8,7 @@ const currentUserEmail = auth.currentUser?.email
 async function getAttendanceData() {
   try {
     const response = await fetch(
-      `http://localhost:8000/GetAttendanceData?email=${currentUserEmail}`
+      `https://td2a0be3bj.execute-api.us-east-2.amazonaws.com/daywork?email=${currentUserEmail}`
     )
     const attendanceData = await response.json()
     // console.log('success', attendanceData)

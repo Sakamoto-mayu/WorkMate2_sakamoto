@@ -95,6 +95,11 @@ const router = createRouter({
       path: '/login',
       name: 'ログイン',
       component: () => import('../views/Login.vue')
+    },
+    {
+      path: '/approvalHistory',
+      name: '承認履歴',
+      component: () => import('../views/ApprovalHistory.vue')
     }
   ]
 })

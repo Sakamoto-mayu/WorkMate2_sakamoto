@@ -1,12 +1,24 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { getStatusName } from '@/lib/getStatusName'
 
 import firebase from '../firebase'
 import { getAuth } from 'firebase/auth'
-import axios from 'axios'
+import axios from 'axios';
+import { useRouter } from 'vue-router';
+
+const attendanceType = ref<any[]>([]);
+
+// 出欠のオプションを取得する
+onMounted(async () => {
+  attendanceType.value = await getStatusName();
+  // console.log(attendanceType.value);
+})
 
 const auth = getAuth(firebase)
 const currentUserEmail = auth.currentUser?.email
+
+const router = useRouter()
 
 // 始業時刻
 const startHour = ref('')
@@ -31,7 +43,7 @@ const department = ref('')
 
 // 取得した勤怠データ（email,date）と入力値を比較する
 const checkEmailAndDate = async () => {
-  const response = await fetch(`http://localhost:8000/GetAttendanceData`)
+  const response = await fetch(`https://td2a0be3bj.execute-api.us-east-2.amazonaws.com/daywork`)
   const attendanceData = await response.json()
   // console.log(attendanceData);
 
@@ -68,7 +80,7 @@ const submitDayWorkData = async (e: Event) => {
 
   // dateの値から月を取得する
   const month = String(selectedDate.getMonth() + 1)
-  console.log(month)
+  // console.log(month)
 
   // dateの値から曜日を取得する
   const days = ['日', '月', '火', '水', '木', '金', '土']
@@ -87,29 +99,32 @@ const submitDayWorkData = async (e: Event) => {
   // console.log(rest.value)
 
   e.preventDefault()
-  if (status.value !== '欠勤') {
-    if (
-      clockIn.value === '' ||
-      clockOut.value === '' ||
-      date.value === '' ||
-      dayOfWeek === '' ||
-      status.value === '' ||
-      rest.value === ''
-    ) {
-      errMsg.value = '※未入力箇所があります'
-      return
-    } else {
-      errMsg.value = ''
-    }
-  } else if (status.value === '欠勤') {
+  if (status.value === '欠勤' || status.value === '有給' || status.value === '特休') {
     if (date.value === '') {
       errMsg.value = '※日付を入力してください'
-      return
+      return;
     } else {
-      // 欠勤を登録する時は、日付以外の値を'-'にする
+      // 欠勤・有給・特休を登録する時は、日付以外の値を'-'にする
       clockIn.value = '-'
       clockOut.value = '-'
       rest.value = '-'
+    }
+  } else {
+    if (
+      startHour.value === '' ||
+      startMin.value === '' ||
+      finishHour.value === '' ||
+      finishMin.value === '' ||
+      date.value === '' ||
+      dayOfWeek === '' ||
+      status.value === '' ||
+      restHour.value === '' ||
+      restMin.value === ''
+    ) {
+      errMsg.value = '※未入力箇所があります'
+      return;
+    } else {
+      errMsg.value = ''
     }
   }
   // 既にemailとdateが存在する場合（isDataExist = true）はPOSTさせない
@@ -117,11 +132,33 @@ const submitDayWorkData = async (e: Event) => {
   if (isDataExist) {
     console.log('既にデータが存在します')
     errMsg.value = '※この対象日は既に登録済みです'
-    return
+    return;
   }
+  // prisma用
+  // const options = {
+  //   method: 'POST',
+  //   headers: {
+  //     'Content-Type': 'application/json'
+  //   },
+  //   body: JSON.stringify({
+  //     email: email.value,
+  //     month: month,
+  //     date: date.value,
+  //     day: dayOfWeek,
+  //     status: status.value,
+  //     clockIn: clockIn.value,
+  //     clockOut: clockOut.value,
+  //     rest: rest.value
+  //   })
+  // }
 
+  // const result = await fetch('http://localhost:8000/PostDayWork', options)
+  // console.log('承認依頼完了', result);
+  // router.push('/monthWork');
+
+  // DynamoDB へ登録
   const options = {
-    method: 'POST',
+    method: 'PUT',
     headers: {
       'Content-Type': 'application/json'
     },
@@ -133,33 +170,15 @@ const submitDayWorkData = async (e: Event) => {
       status: status.value,
       clockIn: clockIn.value,
       clockOut: clockOut.value,
-      rest: rest.value
+      rest: rest.value,
+      admin: false,
+      gm: false,
+      department: department.value
     })
   }
-
-  const result = await fetch('http://localhost:8000/PostDayWork', options)
-  console.log('success', result)
-
-  // DynamoDB へ登録
-//   await fetch('https://td2a0be3bj.execute-api.us-east-2.amazonaws.com/daywork', {
-//     method: 'PUT',
-//     headers: {
-//       'Content-Type': 'application/json'
-//     },
-//     body: JSON.stringify({
-//       email: email.value,
-//       month: month,
-//       date: date.value,
-//       day: dayOfWeek,
-//       status: status.value,
-//       clockIn: clockIn.value,
-//       clockOut: clockOut.value,
-//       rest: rest.value,
-//       admin: false,
-//       gm: false,
-//       department: department.value
-//     })
-//   })
+  const result = await fetch('https://td2a0be3bj.execute-api.us-east-2.amazonaws.com/daywork', options)
+  console.log('承認依頼完了', result);
+  router.push('/monthWork');
 }
 </script>
 
@@ -190,13 +209,11 @@ const submitDayWorkData = async (e: Event) => {
             <label for="status">出欠</label>
           </div>
           <div class="content">
-            <select name="" id="" v-model="status">
-              <option value="出勤">出勤</option>
-              <option value="有給">有給</option>
-              <option value="半休">半休</option>
-              <option value="特休">特休</option>
-              <option value="欠勤">欠勤</option>
+            <select name="status" id="status" v-model="status">
+              <option v-for="item in attendanceType" :key="item.id" :value="item.status_name">{{ item.status_name }}
+              </option>
             </select>
+            <p class="statusMsg">※欠勤・有給・特休を選択した場合、就業時刻と休憩時間は「-」になります。</p>
           </div>
         </div>
         <div class="row">
@@ -211,23 +228,23 @@ const submitDayWorkData = async (e: Event) => {
               <option value="12">12</option>
               <option value="13">13</option>
               <option value="14">14</option>
-              <option value="15">15</option></select
-            >：
+              <option value="15">15</option>
+            </select>：
             <select name="min1" v-model="startMin">
               <option value="00">00</option>
               <option value="10">10</option>
               <option value="20">20</option>
               <option value="30">30</option>
               <option value="40">40</option>
-              <option value="50">50</option></select
-            >&nbsp;～&nbsp;
+              <option value="50">50</option>
+            </select>&nbsp;～&nbsp;
             <select name="hour2" v-model="finishHour">
               <option value="17">17</option>
               <option value="18">18</option>
               <option value="19">19</option>
               <option value="20">20</option>
-              <option value="20">21</option></select
-            >：
+              <option value="20">21</option>
+            </select>：
             <select name="min2" v-model="finishMin">
               <option value="00">00</option>
               <option value="10">10</option>
@@ -248,8 +265,8 @@ const submitDayWorkData = async (e: Event) => {
               <option value="2">2</option>
               <option value="3">3</option>
               <option value="4">4</option>
-              <option value="5">5</option></select
-            >：
+              <option value="5">5</option>
+            </select>：
             <select name="" id="" v-model="restMin">
               <option value="00">00</option>
               <option value="30">30</option>
@@ -268,8 +285,7 @@ const submitDayWorkData = async (e: Event) => {
                     </div>
                 </div> -->
         <div class="button">
-          <button type="submit" class="submit-button">登録</button>&nbsp;
-          <!-- <button class="request-button">承認依頼</button> -->
+          <button type="submit" class="submit-button">承認依頼</button>&nbsp;
         </div>
       </div>
     </form>
@@ -310,6 +326,13 @@ const submitDayWorkData = async (e: Event) => {
   width: 500px;
   border-top: 1px solid #000;
   border-right: 1px solid #000;
+}
+
+.statusMsg {
+  display: flex;
+  align-items: center;
+  margin-left: 5px;
+  font-size: 12px;
 }
 
 #rest {

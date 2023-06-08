@@ -10,8 +10,8 @@ const prisma = new PrismaClient()
 // middleware that is specific to this router
 router.get('/', async (req: Request, res: Response) => {
   try {
-    const attendanceData = await prisma.attendance.findMany()
-    return res.json(attendanceData)
+    const attendanceType = await prisma.attendance_types.findMany()
+    return res.json(attendanceType)
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
       if (e.code === 'P2002') {
