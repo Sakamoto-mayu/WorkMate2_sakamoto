@@ -22,7 +22,6 @@ function getEmail() {
 const userEmail = getEmail()
 console.log('ユーザー：', userEmail)
 
-const name = ref('')
 const department = ref('')
 const role = ref('')
 const dataLists = ref([])
@@ -35,7 +34,6 @@ async function checkUser() {
     })
     department.value = response.data[0].department
     role.value = response.data[0].role
-    name.value = response.data[0].name
   } catch (err) {
     console.log(err)
   }
@@ -66,7 +64,8 @@ async function getBeforeAdmin() {
       body: JSON.stringify({
         admin: false,
         gm: false,
-        department: department.value
+        // department: department.value ←動作確認のため一時的にコメントアウト
+        department: '総務'
       })
     })
     const result = await response.json()
