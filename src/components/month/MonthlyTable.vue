@@ -49,48 +49,48 @@ function getRest(date: any) {
             <div class="label">
                 <label for="date">日付</label>
             </div>
-            <div class="content" v-for="(value, index) in dateArray" :key="index">
-                <p>{{ value }}</p>
+            <div class="content" v-for=" date in dateArray" :key="date">
+                <p>{{ date }}</p>
             </div>
         </div>
         <div class="colum" id="colum">
             <div class="label">
                 <label for="date">曜日</label>
             </div>
-            <div class="content" v-for="(value, index) in dayArray" :key="index">
-                <p>{{ value }}</p>
+            <div class="content" v-for="day in dayArray" :key="day">
+                <p>{{ day }}</p>
             </div>
         </div>
         <div class="colum" id="colum">
             <div class="label">
                 <label for="status">出欠</label>
             </div>
-            <div class="content" v-for="(value, index) in dateArray" :key="index">
-                <p>{{ getStatus(value) }}</p>
+            <div class="content" v-for="date in dateArray" :key="date">
+                <p>{{ getStatus(date) }}</p>
             </div>
         </div>
         <div class="colum" id="colum">
             <div class="label">
                 <label for="clockIn">始業時刻</label>
             </div>
-            <div class="content" v-for="(value, index) in dateArray" :key="index">
-                <p>{{ getClockIn(value) }}</p>
+            <div class="content" v-for="date in dateArray" :key="date">
+                <p>{{ getClockIn(date) }}</p>
             </div>
         </div>
         <div class="colum" id="colum">
             <div class="label">
                 <label for="clockOut">終業時刻</label>
             </div>
-            <div class="content" v-for="(value, index) in dateArray" :key="index">
-                <p>{{ getClockOut(value) }}</p>
+            <div class="content" v-for="date in dateArray" :key="date">
+                <p>{{ getClockOut(date) }}</p>
             </div>
         </div>
         <div class="colum" id="colum">
             <div class="label">
                 <label for="rest">休憩</label>
             </div>
-            <div class="content" id="content" v-for="(value, index) in dateArray" :key="index">
-                <p>{{ getRest(value) }}</p>
+            <div class="content" id="content" v-for="date in dateArray" :key="date">
+                <p>{{ getRest(date) }}</p>
             </div>
         </div>
     </div>

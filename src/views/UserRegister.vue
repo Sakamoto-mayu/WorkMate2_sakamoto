@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { getDepartments } from '@/lib/getDepartments';
+import { ref, onMounted } from 'vue'
 import firebase from '../firebase'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
@@ -11,9 +12,17 @@ const auth = getAuth(firebase)
 const router = useRouter()
 
 const name = ref('')
+const department = ref('')
 const email = ref('')
 const password = ref('')
 const errorMessage = ref('')
+
+const departmentData = ref([]);
+// 部署データを取得する
+onMounted(async () => {
+  departmentData.value = await getDepartments();
+  console.log(departmentData.value);
+})
 
 const goToLogin = async () => {
   router.push('/login')
@@ -22,15 +31,15 @@ const goToLogin = async () => {
 const submit = async (event: Event) => {
   event.preventDefault()
 
-  if (email.value === '' || password.value === '' || name.value === '') {
-    if (email.value === '' && password.value === '' && name.value === '') {
+  if (email.value === '' || password.value === '' || name.value === '' || department.value === '') {
+    if (email.value === '' && password.value === '' && name.value === '' && department.value === '') {
       errorMessage.value = 'フォームを入力してください'
       return
     } else if (email.value === '' && name.value === '') {
-      errorMessage.value = '名前とメールアドレスを入力してください'
+      errorMessage.value = 'ユーザー名とメールアドレスを入力してください'
       return
     } else if (password.value === '' && name.value === '') {
-      errorMessage.value = '名前とパスワードを入力してください'
+      errorMessage.value = 'ユーザー名とパスワードを入力してください'
       return
     } else if (email.value === '' && password.value === '') {
       errorMessage.value = 'メールアドレスとパスワードを入力してください'
@@ -42,7 +51,10 @@ const submit = async (event: Event) => {
       errorMessage.value = 'パスワードを入力してください'
       return
     } else if (name.value === '') {
-      errorMessage.value = '名前を入力してください'
+      errorMessage.value = 'ユーザー名を入力してください'
+      return
+    } else if (department.value === '') {
+      errorMessage.value = '部署を選択してください'
       return
     }
   }
@@ -58,7 +70,7 @@ const submit = async (event: Event) => {
           email: email.value,
           password: password.value,
           name: name.value,
-          // department: department.value,
+          department: department.value,
           role:"member"
         })
         .then((response) => console.log('mongoDBユーザー', response))
@@ -94,8 +106,8 @@ const submit = async (event: Event) => {
           </div>
           <div class="department">
             <label for="department">部署：</label>
-            <select>
-              <option>部署名</option><!--demartmentテーブルから部署名を取得して表示する-->
+            <select name="department" id="department" v-model="department">
+              <option v-for="item in departmentData" :key="item.id" :value="item.department_name">{{ item.department_name }}</option>
             </select>
           </div>
 
