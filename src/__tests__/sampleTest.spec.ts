@@ -1,3 +1,6 @@
+// 初期描写の状態のみをテストする  mount() vueページを擬似的にmountする
+// function.ts 機能のみ
+
 import { describe, test, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import sampleTest from '@/sampleTest.vue'

@@ -58,7 +58,7 @@ async function checkUser() {
 checkUser()
 
 //   DynamoDB から取得
-async function getBeforeAdmin() {
+async function getWorkData() {
   await checkUser()
   if (role.value === 'admin') {
     const response = await fetch('https://td2a0be3bj.execute-api.us-east-2.amazonaws.com/daywork', {
@@ -66,7 +66,7 @@ async function getBeforeAdmin() {
       body: JSON.stringify({
         admin: false,
         gm: false,
-        department: department.value
+        department: '総務'
       })
     })
     const result = await response.json()
@@ -91,12 +91,12 @@ async function getBeforeAdmin() {
 
 // 画面表示用
 onMounted(async () => {
-  const workData = await getBeforeAdmin()
+  const workData = await getWorkData()
   console.log(workData.Items)
   dataLists.value = workData.Items
 })
 
-// 承認ボタン
+// 承認ボタン true/false切り替え
 const approveWork = async (list) => {
   let admin, gm
   if (list.admin === true) {
