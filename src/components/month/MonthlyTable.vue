@@ -2,6 +2,10 @@
 import { ref, onMounted } from 'vue';
 import getMonthlyDate from '@/lib/getMonthlyDate'
 import getAttendanceData from '@/lib/getWorkData';
+import { useSelectedDateStore } from '@/stores/selectedDate'
+import { useRouter } from 'vue-router';
+
+const router = useRouter()
 
 // 日付の一覧データ
 const calendar = getMonthlyDate();
@@ -23,6 +27,13 @@ onMounted(async () => {
     // console.log(attendanceData.value);
 })
 
+// 日付をクリックするとdateの値をstoreに保持し、日次勤怠へ遷移する
+function handleDateClick(date: any) {
+    const dateStore = useSelectedDateStore();
+    dateStore.setSelectedDate(date);
+    router.push({ path: '/dayWork' });
+}
+
 function getStatus(date: any) {
     const exists = attendanceData.value.find((data: any) => data.date === date)
     return exists ? exists.status : '-';
@@ -43,13 +54,12 @@ function getRest(date: any) {
 </script>
 
 <template>
-    <h2 class="pageTitle">月次勤怠データ</h2>
     <div class="table">
         <div class="colum">
             <div class="label">
                 <label for="date">日付</label>
             </div>
-            <div class="content" v-for=" date in dateArray" :key="date">
+            <div class="content" id="date" v-for=" date in dateArray" :key="date" @click="handleDateClick(date)">
                 <p>{{ date }}</p>
             </div>
         </div>
@@ -97,16 +107,6 @@ function getRest(date: any) {
 </template>
 
 <style scoped>
-.pageTitle {
-    width: max-content;
-    margin-bottom: 10px;
-    padding: 0 5px;
-    border: 1px solid #977A58;
-    border-radius: 5px;
-    background-color: #F6E9D8;
-    color: #977A58;
-}
-
 .table {
     display: flex;
     flex-direction: row;
@@ -130,5 +130,10 @@ function getRest(date: any) {
 
 #colum {
     border-left: 1px solid #000;
+}
+
+#date:hover {
+    cursor: pointer;
+    opacity: 0.6;
 }
 </style>

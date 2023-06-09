@@ -6,7 +6,6 @@
       <button type="button" @click="goToMonthWorkPage">月次勤怠</button>
       <button type="button" @click="goToSetting">各種設定</button>
       <button type="button" @click="signOut">ログアウト</button>
-      <button type="button" @click="userRegisterPage">ユーザー登録</button>
     </nav>
   </header>
 </template>
@@ -42,11 +41,6 @@ const goToMonthWorkPage = async () => {
 const goToSetting = async () => {
   router.push('/setting')
 }
-
-const userRegisterPage = async () => {
-  router.push('/userRegister')
-}
-
 
 </script>
 
