@@ -80,6 +80,7 @@ const router = createRouter({
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/MonthWork_test.vue'),
+      meta: { requiresAuth: true }
     },
     {
       path: '/setting',
@@ -95,6 +96,12 @@ const router = createRouter({
       path: '/login',
       name: 'ログイン',
       component: () => import('../views/Login.vue')
+    },
+    {
+      path: '/approve',
+      name: '勤怠承認',
+      component: () => import('../views/Approve.vue'),
+      meta: { requiresAuth: true }
     },
     {
       path: '/approvalHistory',

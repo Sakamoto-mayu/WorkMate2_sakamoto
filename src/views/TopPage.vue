@@ -8,6 +8,7 @@ import { getAuth } from 'firebase/auth'
 
 const auth = getAuth(firebase)
 const currentUserEmail = auth.currentUser?.email
+console.log('トップページだよ', currentUserEmail)
 </script>
 
 <template>
@@ -25,9 +26,9 @@ const currentUserEmail = auth.currentUser?.email
   width: max-content;
   margin: 10px 0;
   padding: 0 5px;
-  border: 1px solid #977A58;
+  border: 1px solid #977a58;
   border-radius: 5px;
-  background-color: #F6E9D8;
-  color: #977A58;
+  background-color: #f6e9d8;
+  color: #977a58;
 }
 </style>
