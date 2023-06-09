@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getDepartments } from '@/lib/getDepartments';
+import { getDepartments } from '@/lib/getDepartments'
 import { ref, onMounted } from 'vue'
 import firebase from '../firebase'
 import axios from 'axios'
@@ -17,11 +17,11 @@ const email = ref('')
 const password = ref('')
 const errorMessage = ref('')
 
-const departmentData = ref([]);
+const departmentData = ref([])
 // 部署データを取得する
 onMounted(async () => {
-  departmentData.value = await getDepartments();
-  console.log(departmentData.value);
+  departmentData.value = await getDepartments()
+  console.log(departmentData.value)
 })
 
 const goToLogin = async () => {
@@ -32,7 +32,12 @@ const submit = async (event: Event) => {
   event.preventDefault()
 
   if (email.value === '' || password.value === '' || name.value === '' || department.value === '') {
-    if (email.value === '' && password.value === '' && name.value === '' && department.value === '') {
+    if (
+      email.value === '' &&
+      password.value === '' &&
+      name.value === '' &&
+      department.value === ''
+    ) {
       errorMessage.value = 'フォームを入力してください'
       return
     } else if (email.value === '' && name.value === '') {
@@ -71,7 +76,7 @@ const submit = async (event: Event) => {
           password: password.value,
           name: name.value,
           department: department.value,
-          role:"member"
+          role: 'member'
         })
         .then((response) => console.log('mongoDBユーザー', response))
         .catch((err) => console.log(err))
@@ -96,35 +101,63 @@ const submit = async (event: Event) => {
 </script>
 
 <template>
-    <div class="userRegister" id="userRegister-template">
-      <h2>新規登録</h2>
-      <form @submit="submit">
-        <div class="userRegisterForm">
-          <div class="name">
-            <label for="name">ユーザー名：</label>
-            <input id="name" type="text" v-model="name" name="name" placeholder="お名前" />
-          </div>
-          <div class="department">
-            <label for="department">部署：</label>
-            <select name="department" id="department" v-model="department">
-              <option v-for="item in departmentData" :key="item.id" :value="item.department_name">{{ item.department_name }}</option>
-            </select>
-          </div>
-
-          <div class="email">
-            <label for="email">メールアドレス：</label>
-            <input id="email" type="text" v-model="email" name="email" placeholder="メールアドレス" />
-          </div>
-          <div class="password">
-            <label for="password">パスワード：</label>
-            <input id="password" type="text" v-model="password" name="password" placeholder="パスワード" />
-          </div>
-          <p class="errMsg" v-if="errorMessage">※{{ errorMessage }}</p>
-          <button class="submitButton" type="submit">送信</button>
+  <div class="userRegister" id="userRegister-template">
+    <h2>新規登録</h2>
+    <form @submit="submit">
+      <div class="userRegisterForm">
+        <div class="name">
+          <label for="name">ユーザー名：</label>
+          <input
+            id="name"
+            type="text"
+            v-model="name"
+            name="name"
+            placeholder="お名前"
+            data-testid="name"
+          />
         </div>
-      </form>
-      <button class="submitButton" type="button" @click="goToLogin">ログイン画面へ</button>
-    </div>
+        <div class="department">
+          <label for="department">部署：</label>
+          <select name="department" id="department" v-model="department">
+            <option
+              v-for="item in departmentData"
+              :key="item.id"
+              :value="item.department_name"
+              data-testid="department"
+            >
+              {{ item.department_name }}
+            </option>
+          </select>
+        </div>
+
+        <div class="email">
+          <label for="email">メールアドレス：</label>
+          <input
+            id="email"
+            type="text"
+            v-model="email"
+            name="email"
+            placeholder="メールアドレス"
+            data-testid="email"
+          />
+        </div>
+        <div class="password">
+          <label for="password">パスワード：</label>
+          <input
+            id="password"
+            type="text"
+            v-model="password"
+            name="password"
+            placeholder="パスワード"
+            data-testid="password"
+          />
+        </div>
+        <p class="errMsg" v-if="errorMessage" testid="errorMsg">※{{ errorMessage }}</p>
+        <button class="submitButton" type="submit">送信</button>
+      </div>
+    </form>
+    <button class="submitButton" type="button" @click="goToLogin">ログイン画面へ</button>
+  </div>
 </template>
 
 <style scoped>
@@ -133,10 +166,10 @@ const submit = async (event: Event) => {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 10px 0;;
+  padding: 10px 0;
   border-radius: 5px;
-  background-color: #F6E9D8;
-  color: #977A58;
+  background-color: #f6e9d8;
+  color: #977a58;
   /* border: 1px solid #000 */
 }
 
@@ -165,7 +198,7 @@ const submit = async (event: Event) => {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  margin-right: 0px
+  margin-right: 0px;
   /* border: 1px solid #000; */
 }
 
@@ -181,19 +214,18 @@ const submit = async (event: Event) => {
 .email input:focus,
 .password input:focus {
   outline: 0;
-  box-shadow: 0 0 1px #977A58;
+  box-shadow: 0 0 1px #977a58;
   border-radius: 5px;
 }
-
 
 .submitButton {
   width: 130px;
   height: 30px;
   cursor: pointer;
   margin-top: 15px;
-  border: 1px solid #977A58;
+  border: 1px solid #977a58;
   border-radius: 100vh;
-  background-color: #977A58;
+  background-color: #977a58;
   color: #fff;
 }
 
