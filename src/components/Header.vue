@@ -8,7 +8,6 @@
       <button type="button" @click="goToApprovePage">勤怠承認</button>
       <button type="button" @click="goToSetting">各種設定</button>
       <button type="button" @click="signOut">ログアウト</button>
-      <button type="button" @click="userRegisterPage">ユーザー登録</button>
     </nav>
   </header>
 </template>
@@ -49,9 +48,6 @@ const goToSetting = async () => {
   router.push('/setting')
 }
 
-const userRegisterPage = async () => {
-  router.push('/userRegister')
-}
 </script>
 
 <style>

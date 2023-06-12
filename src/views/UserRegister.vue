@@ -12,12 +12,12 @@ const auth = getAuth(firebase)
 const router = useRouter()
 
 const name = ref('')
-const department = ref('')
+const department = ref('部署を選択してください')
 const email = ref('')
 const password = ref('')
 const errorMessage = ref('')
 
-const departmentData = ref([]);
+const departmentData = ref([]as any[]);
 // 部署データを取得する
 onMounted(async () => {
   departmentData.value = await getDepartments();
@@ -106,8 +106,9 @@ const submit = async (event: Event) => {
           </div>
           <div class="department">
             <label for="department">部署：</label>
-            <select name="department" id="department" v-model="department">
-              <option v-for="item in departmentData" :key="item.id" :value="item.department_name">{{ item.department_name }}</option>
+            <select name="department" id="department" v-model="department" :style="{ color: department === '部署を選択してください' ? 'gray' : '' }">
+              <option class="placeholder" disabled value="部署を選択してください">部署を選択してください</option>
+              <option class="departments" v-for="item in departmentData" :key="item.id" :value="item.department_name">{{ item.department_name }}</option>
             </select>
           </div>
 
@@ -185,6 +186,9 @@ const submit = async (event: Event) => {
   border-radius: 5px;
 }
 
+.departments {
+  color: #000;
+}
 
 .submitButton {
   width: 130px;

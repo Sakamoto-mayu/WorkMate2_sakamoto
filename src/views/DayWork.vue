@@ -1,13 +1,22 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useSelectedDateStore } from '../stores/selectedDate'
 import { getStatusName } from '@/lib/getStatusName'
 
 import firebase from '../firebase'
 import { getAuth } from 'firebase/auth'
-import axios from 'axios'
-import { useRouter } from 'vue-router'
+import axios from 'axios';
+import { useRouter } from 'vue-router';
 
-const attendanceType = ref<any[]>([])
+const store = useSelectedDateStore()
+console.log(store.selectedDate)
+
+const handleDateInput = (event: Event) => {
+  const inputDate = (event.target as HTMLInputElement).value;
+  store.setSelectedDate(inputDate)
+}
+
+const attendanceType = ref<any[]>([]);
 
 // 出欠のオプションを取得する
 onMounted(async () => {
@@ -21,46 +30,25 @@ const currentUserEmail = auth.currentUser?.email
 const router = useRouter()
 
 // 始業時刻
-const startHour = ref('')
-const startMin = ref('')
+const startHour = ref('9')
+const startMin = ref('00')
 const clockIn = ref('')
 // 終業時刻
-const finishHour = ref('')
-const finishMin = ref('')
+const finishHour = ref('18')
+const finishMin = ref('00')
 const clockOut = ref('')
 // 休憩時間
-const restHour = ref('')
-const restMin = ref('')
+const restHour = ref('1')
+const restMin = ref('00')
 const rest = ref('')
 
-// const month = ref('');
-const date = ref('')
+// 「現在日時の前から10文字目まで(例.2023/06/08)」もしくは「月次勤怠でクリックされた日付」を初期値に設定
+const date = ref(store.selectedDate ?? new Date().toISOString().substring(0, 10))
 const email = ref(currentUserEmail)
-const status = ref('')
+const status = ref('出勤')
 const errMsg = ref('')
 
 const department = ref('')
-
-// 取得した勤怠データ（email,date）と入力値を比較する
-const checkEmailAndDate = async () => {
-  const response = await fetch(`https://td2a0be3bj.execute-api.us-east-2.amazonaws.com/daywork`)
-  const attendanceData = await response.json()
-  // console.log(attendanceData);
-
-  // 勤怠データからemailとdateの値を取り出す
-  const newArray = attendanceData.map((item: any) => ({ email: item.email, date: item.date }))
-  // console.log(newArray)
-
-  // emailとdateの値が存在するかの判定
-  const isDataExist = newArray.some(
-    (item: any) => item.email === email.value && item.date === date.value
-  )
-  if (isDataExist) {
-    return true
-  } else {
-    return false
-  }
-}
 
 const submitDayWorkData = async (e: Event) => {
   const selectedDate = new Date(date.value)
@@ -127,14 +115,29 @@ const submitDayWorkData = async (e: Event) => {
       errMsg.value = ''
     }
   }
-  // 既にemailとdateが存在する場合（isDataExist = true）はPOSTさせない
-  const isDataExist = await checkEmailAndDate()
-  if (isDataExist) {
-    console.log('既にデータが存在します')
-    errMsg.value = '※この対象日は既に登録済みです'
-    return
-  }
+  // prisma用
+  // const options = {
+  //   method: 'POST',
+  //   headers: {
+  //     'Content-Type': 'application/json'
+  //   },
+  //   body: JSON.stringify({
+  //     email: email.value,
+  //     month: month,
+  //     date: date.value,
+  //     day: dayOfWeek,
+  //     status: status.value,
+  //     clockIn: clockIn.value,
+  //     clockOut: clockOut.value,
+  //     rest: rest.value
+  //   })
+  // }
 
+  // const result = await fetch('http://localhost:8000/PostDayWork', options)
+  // console.log('承認依頼完了', result);
+  // router.push('/monthWork');
+
+  // DynamoDB へ登録
   const options = {
     method: 'PUT',
     headers: {
@@ -154,12 +157,11 @@ const submitDayWorkData = async (e: Event) => {
       department: department.value
     })
   }
-  const result = await fetch(
-    'https://td2a0be3bj.execute-api.us-east-2.amazonaws.com/daywork',
-    options
-  )
-  console.log('承認依頼完了', result)
-  router.push('/monthWork')
+  const result = await fetch('https://td2a0be3bj.execute-api.us-east-2.amazonaws.com/daywork', options)
+  console.log('承認依頼完了', result);
+  router.push('/monthWork');
+  // PUTに施工したら、日付を現在日時に戻す
+  store.setSelectedDate(new Date().toISOString().substring(0, 10))
 }
 </script>
 
@@ -182,7 +184,7 @@ const submitDayWorkData = async (e: Event) => {
             <label for="date">対象日</label>
           </div>
           <div class="content">
-            <input type="date" v-model="date" />
+            <input type="date" v-model="date" @input="handleDateInput"/>
           </div>
         </div>
         <div class="row">
