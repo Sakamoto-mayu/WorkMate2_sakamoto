@@ -5,7 +5,9 @@ const ChangePassSchema = new Schema(
   {
     email: String,
     name: String,
-    password: String
+    password: String,
+    department: String,
+    role: String
   },
   { collection: 'users', versionKey: false }
 )

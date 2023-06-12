@@ -57,7 +57,7 @@ app.get('/userData', (req, res) => {
 })
 
 app.post('/userData', (req, res) => {
-  const { id, newPass } = req.body
+  const { id, newPass, newRole } = req.body
 
   if (id && newPass) {
     // パスワードを変更する処理
@@ -68,6 +68,16 @@ app.post('/userData', (req, res) => {
       .catch((err) => {
         console.error(err)
         return res.status(500).send('パスワードの変更に失敗しました')
+      })
+  } else if (id && newRole) {
+    // roleを変更する処理
+    ChangePass.findByIdAndUpdate(id, { role: newRole }, { new: true })
+      .then((result) => {
+        return res.json(result)
+      })
+      .catch((err) => {
+        console.error(err)
+        return res.status(500).send('roleの変更に失敗しました')
       })
   } else {
     // 新しいユーザーを作成する処理
