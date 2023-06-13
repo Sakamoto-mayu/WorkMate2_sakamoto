@@ -2,6 +2,7 @@
 import axios from 'axios'
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useSelectedDateStore } from '../stores/selectedDate'
 // import UserListVue from '../components/UserList.vue'
 
 // 承認済み勤怠データを表示する
@@ -20,10 +21,16 @@ const errorMessage = ref('')
 const router = useRouter()
 
 const roleData = ref([
-  { role_name: 'GM' },
-  { role_name: 'admin' },
-  { role_name: 'member' }
+  // { role_name: 'GM' },
+  // { role_name: 'admin' },
+  // { role_name: 'member' }
 ] as any[])
+
+const userRole = useSelectedDateStore()
+
+if (userRole.userRole !== 'admin' && userRole.userRole !== 'GM') {
+  router.push('/')
+}
 
 const handleSubmit = (event: any) => {
   event.preventDefault() // フォームが送信されたときにページがリロードされないようにする
@@ -46,12 +53,13 @@ onMounted(async () => {
     })
     .catch((err) => {})
 
-  // await axios('http://localhost:8000/GetRoleData')
-  //   .then((response) => {
-  //     // console.log(response.data)
-  //     roleData.value = response.data
-  //   })
-  //   .catch((err) => {})
+  await axios('http://localhost:8000/GetRoleData')
+    .then((response) => {
+      // console.log(response.data);
+      roleData.value = response.data
+    })
+    .catch((err) => {})
+
 })
 
 const setRole = (e: any) => {

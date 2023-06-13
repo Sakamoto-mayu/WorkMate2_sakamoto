@@ -32,6 +32,9 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import Cookies from 'js-cookie'
 import axios from 'axios'
+import { useSelectedDateStore } from '../stores/selectedDate'
+
+const setRole = useSelectedDateStore()
 
 const router = useRouter()
 
@@ -83,10 +86,12 @@ const login = () => {
         .then((response) => {
           // console.log(response.data[0])
           Cookies.set('user', `${response.data[0]._id}`)
+          setRole.setRole(response.data[0].role)
         })
         .catch((err) => {})
       // const random = Math.random() * 11
       // Cookies.set('user', `${random}`)
+      
       router.push('/')
     })
     .catch((error) => {
