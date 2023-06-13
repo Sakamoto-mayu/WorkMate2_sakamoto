@@ -5,7 +5,8 @@
       <button type="button" @click="goToTop">TOP</button>
       <button type="button" @click="goToDayWorkPage">日次勤怠</button>
       <button type="button" @click="goToMonthWorkPage">月次勤怠</button>
-      <button type="button" @click="goToApprovePage">勤怠承認</button>
+      <button type="button" @click="goToApprovePage" v-if="userRole.userRole === 'GM' || userRole.userRole === 'admin'">勤怠承認</button>
+      <button type="button" @click="goToAuthChange" v-if="userRole.userRole === 'GM' || userRole.userRole === 'admin'">権限変更</button>
       <button type="button" @click="goToSetting">各種設定</button>
       <button type="button" @click="signOut">ログアウト</button>
     </nav>
@@ -18,11 +19,17 @@ import { useRouter } from 'vue-router'
 import Cookies from 'js-cookie'
 import axios from 'axios'
 import { async } from '@firebase/util'
+import { useSelectedDateStore } from '../stores/selectedDate'
+
+const userRole = useSelectedDateStore()
+
+console.log(userRole.userRole)
 
 const router = useRouter()
 
 const signOut = async () => {
   logout()
+  userRole.$reset
   router.push('/login').catch((error) => {
     console.log(error)
   })
@@ -42,6 +49,10 @@ const goToMonthWorkPage = async () => {
 
 const goToApprovePage = async () => {
   router.push('/approve')
+}
+
+const goToAuthChange = async () => {
+  router.push('/authChange')
 }
 
 const goToSetting = async () => {
