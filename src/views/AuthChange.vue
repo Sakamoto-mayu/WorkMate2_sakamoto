@@ -59,6 +59,7 @@ onMounted(async () => {
       roleData.value = response.data
     })
     .catch((err) => {})
+
 })
 
 const setRole = (e: any) => {
@@ -79,10 +80,14 @@ const searchDepartment = (e: any) => {
   const selectDepartment = e.target.value
   if (selectDepartment === 'none') {
     searchUser.value = userData.value
+    selectRole.value = ''
+    userId.value = ''
     return
   }
   const search = userData.value.filter(({ department }) => department === selectDepartment)
   searchUser.value = search
+  selectRole.value = ''
+  userId.value = ''
   console.log(search)
 }
 
