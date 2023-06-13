@@ -118,13 +118,8 @@ const submit = async (event: Event) => {
         </div>
         <div class="department">
           <label for="department">部署：</label>
-          <select name="department" id="department" v-model="department">
-            <option
-              v-for="item in departmentData"
-              :key="item.id"
-              :value="item.department_name"
-              data-testid="department"
-            >
+          <select name="department" id="department" v-model="department" data-testid="department">
+            <option v-for="item in departmentData" :key="item.id" :value="item.department_name">
               {{ item.department_name }}
             </option>
           </select>
@@ -152,8 +147,8 @@ const submit = async (event: Event) => {
             data-testid="password"
           />
         </div>
-        <p class="errMsg" v-if="errorMessage" testid="errorMsg">※{{ errorMessage }}</p>
-        <button class="submitButton" type="submit">送信</button>
+        <p class="errMsg" v-if="errorMessage" data-testid="errorMsg">※{{ errorMessage }}</p>
+        <button class="submitButton" type="submit" data-testid="submit">送信</button>
       </div>
     </form>
     <button class="submitButton" type="button" @click="goToLogin">ログイン画面へ</button>

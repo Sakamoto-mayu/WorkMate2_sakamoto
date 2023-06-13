@@ -12,7 +12,11 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "format": "prettier --write src/",
     "nodemon": "nodemon server.ts",
-    "start": "node src/backend/index.js"
+    "start": "node src/backend/index.js",
+    "test": "npm run docker:up && npm run migrate:postgres && vitest",
+    "migrate:postgres": "npx prisma migrate deploy",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.338.0",
@@ -26,7 +30,7 @@
     "axios": "^1.4.0",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
-    "dotenv": "^16.1.1",
+    "dotenv": "^16.1.4",
     "dotenv-expand": "^10.0.0",
     "esbuild": "^0.17.19",
     "express": "^4.18.2",
