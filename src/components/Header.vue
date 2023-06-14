@@ -5,8 +5,27 @@
       <button type="button" @click="goToTop">TOP</button>
       <button type="button" @click="goToDayWorkPage">日次勤怠</button>
       <button type="button" @click="goToMonthWorkPage">月次勤怠</button>
-      <button type="button" @click="goToApprovePage" v-if="userRole.userRole === 'GM' || userRole.userRole === 'admin'">勤怠承認</button>
-      <button type="button" @click="goToAuthChange" v-if="userRole.userRole === 'GM' || userRole.userRole === 'admin'">権限変更</button>
+      <button
+        type="button"
+        @click="goToApprovePage"
+        v-if="userRole.userRole === 'GM' || userRole.userRole === 'admin'"
+      >
+        勤怠承認
+      </button>
+      <button
+        type="button"
+        @click="goToApproveHistory"
+        v-if="userRole.userRole === 'GM' || userRole.userRole === 'admin'"
+      >
+        承認履歴
+      </button>
+      <button
+        type="button"
+        @click="goToAuthChange"
+        v-if="userRole.userRole === 'GM' || userRole.userRole === 'admin'"
+      >
+        権限変更
+      </button>
       <button type="button" @click="goToSetting">各種設定</button>
       <button type="button" @click="signOut">ログアウト</button>
     </nav>
@@ -51,6 +70,10 @@ const goToApprovePage = async () => {
   router.push('/approve')
 }
 
+const goToApproveHistory = async () => {
+  router.push('/approvalHistory')
+}
+
 const goToAuthChange = async () => {
   router.push('/authChange')
 }
@@ -58,7 +81,6 @@ const goToAuthChange = async () => {
 const goToSetting = async () => {
   router.push('/setting')
 }
-
 </script>
 
 <style>
