@@ -118,8 +118,13 @@ const submit = async (event: Event) => {
         </div>
         <div class="department">
           <label for="department">部署：</label>
-          <select name="department" id="department" v-model="department" data-testid="department">
-            <option v-for="item in departmentData" :key="item.id" :value="item.department_name">
+          <select name="department" id="department" v-model="department">
+            <option
+              data-testid="department"
+              v-for="item in departmentData"
+              :key="item.id"
+              :value="item.department_name"
+            >
               {{ item.department_name }}
             </option>
           </select>
