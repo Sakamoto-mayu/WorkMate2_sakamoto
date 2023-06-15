@@ -54,17 +54,7 @@ const submitDayWorkData = async (e: Event) => {
   const selectedDate = new Date(date.value)
   // console.log(selectedDate);
 
-  //departmentを取得
-  axios
-    .get('http://localhost:3000/userData', { params: { email: currentUserEmail } })
-    .then((response) => {
-      // const department = response.data[0].department
-      department.value = response.data[0].department
-      console.log(response)
-    })
-    .catch((err) => {
-      console.log(err)
-    })
+
 
   // dateの値から月を取得する
   const month = String(selectedDate.getMonth() + 1)
@@ -137,6 +127,17 @@ const submitDayWorkData = async (e: Event) => {
   // console.log('承認依頼完了', result);
   // router.push('/monthWork');
 
+    //departmentを取得
+  await axios
+    .get('http://localhost:3000/userData', { params: { email: currentUserEmail } })
+    .then((response) => {
+      // const department = response.data[0].department
+      department.value = response.data[0].department
+      console.log(response)
+    })
+    .catch((err) => {
+      console.log(err)
+    })
   // DynamoDB へ登録
   const options = {
     method: 'PUT',
@@ -159,8 +160,9 @@ const submitDayWorkData = async (e: Event) => {
   }
   const result = await fetch('https://td2a0be3bj.execute-api.us-east-2.amazonaws.com/daywork', options)
   console.log('承認依頼完了', result);
+  console.log(department.value)
   router.push('/monthWork');
-  // PUTに施工したら、日付を現在日時に戻す
+  // PUTに成功したら、日付を現在日時に戻す
   store.setSelectedDate(new Date().toISOString().substring(0, 10))
 }
 </script>
