@@ -107,6 +107,11 @@ const router = createRouter({
       path: '/approvalHistory',
       name: '承認履歴',
       component: () => import('../views/ApprovalHistory.vue')
+    },
+    {
+      path:'/authChange',
+      name:'権限変更',
+      component: () => import('../views/AuthChange.vue')
     }
   ]
 })

@@ -2,8 +2,9 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
-const GetUsersListSchema = new Schema(
+const GetAllUsersListSchema = new Schema(
   {
+    _id: String,
     email: String,
     name: String,
     password: String,
@@ -13,4 +14,4 @@ const GetUsersListSchema = new Schema(
   { collection: 'users' }
 )
 
-module.exports = mongoose.model('GetUsersList', GetUsersListSchema)
+module.exports = mongoose.model('GetAllUsersList', GetAllUsersListSchema)

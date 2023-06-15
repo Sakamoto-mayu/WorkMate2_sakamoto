@@ -25,6 +25,7 @@ const GetAttendanceData = require('./postgresqlAPI/GetAttendanceData')
 const CheckDuplicateData = require('./postgresqlAPI/CheckDuplicateData')
 const GetAttendanceType = require('./postgresqlAPI/GetAttendanceType')
 const GetDepartmentData = require('./postgresqlAPI/GetDepartmentData')
+const GetRoleData = require('./postgresqlAPI/GetRoleData')
 
 // app.use(/Localhost8000以降のパス指定, importしたモジュール名)
 // app.use('/PostUserRegister', PostUserRegister)
@@ -34,6 +35,7 @@ app.use('/GetAttendanceData', GetAttendanceData)
 app.use('/CheckDuplicatedata', CheckDuplicateData)
 app.use('/GetAttendanceType', GetAttendanceType)
 app.use('/GetDepartmentData', GetDepartmentData)
+app.use('/GetRoleData', GetRoleData)
 
 app.listen(port, () => console.log(`DB listening on port ${port}!`))
 
