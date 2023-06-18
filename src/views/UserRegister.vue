@@ -12,12 +12,12 @@ const auth = getAuth(firebase)
 const router = useRouter()
 
 const name = ref('')
-const department = ref('')
+const department = ref('部署を選択してください')
 const email = ref('')
 const password = ref('')
 const errorMessage = ref('')
 
-const departmentData = ref([])
+const departmentData = ref([] as any[])
 // 部署データを取得する
 onMounted(async () => {
   departmentData.value = await getDepartments()
@@ -107,20 +107,21 @@ const submit = async (event: Event) => {
       <div class="userRegisterForm">
         <div class="name">
           <label for="name">ユーザー名：</label>
-          <input
-            id="name"
-            type="text"
-            v-model="name"
-            name="name"
-            placeholder="お名前"
-            data-testid="name"
-          />
+          <input id="name" type="text" v-model="name" name="name" placeholder="お名前" />
         </div>
         <div class="department">
           <label for="department">部署：</label>
-          <select name="department" id="department" v-model="department">
+          <select
+            name="department"
+            id="department"
+            v-model="department"
+            :style="{ color: department === '部署を選択してください' ? 'gray' : '' }"
+          >
+            <option class="placeholder" disabled value="部署を選択してください">
+              部署を選択してください
+            </option>
             <option
-              data-testid="department"
+              class="departments"
               v-for="item in departmentData"
               :key="item.id"
               :value="item.department_name"
@@ -132,14 +133,7 @@ const submit = async (event: Event) => {
 
         <div class="email">
           <label for="email">メールアドレス：</label>
-          <input
-            id="email"
-            type="text"
-            v-model="email"
-            name="email"
-            placeholder="メールアドレス"
-            data-testid="email"
-          />
+          <input id="email" type="text" v-model="email" name="email" placeholder="メールアドレス" />
         </div>
         <div class="password">
           <label for="password">パスワード：</label>
@@ -149,11 +143,10 @@ const submit = async (event: Event) => {
             v-model="password"
             name="password"
             placeholder="パスワード"
-            data-testid="password"
           />
         </div>
-        <p class="errMsg" v-if="errorMessage" data-testid="errorMsg">※{{ errorMessage }}</p>
-        <button class="submitButton" type="submit" data-testid="submit">送信</button>
+        <p class="errMsg" v-if="errorMessage">※{{ errorMessage }}</p>
+        <button class="submitButton" type="submit">送信</button>
       </div>
     </form>
     <button class="submitButton" type="button" @click="goToLogin">ログイン画面へ</button>
@@ -216,6 +209,10 @@ const submit = async (event: Event) => {
   outline: 0;
   box-shadow: 0 0 1px #977a58;
   border-radius: 5px;
+}
+
+.departments {
+  color: #000;
 }
 
 .submitButton {

@@ -38,7 +38,7 @@ async function checkUser() {
     console.log(err)
   }
 
-  // ログインユーザーがGMまたはadminの場合トップへ戻る
+  // ログインユーザーがGMまたはadmin以外の場合トップへ戻る
   async function checkRole() {
     try {
       if (role.value !== 'GM' && role.value !== 'admin') {
@@ -65,7 +65,7 @@ async function getWorkData() {
         admin: false,
         gm: false,
         // department: department.value ←動作確認のため一時的にコメントアウト
-        department: '総務'
+        department: department.value
       })
     })
     const result = await response.json()
@@ -93,6 +93,8 @@ onMounted(async () => {
   const workData = await getWorkData()
   console.log(workData.Items)
   dataLists.value = workData.Items
+  // ユーザー名取得、この中でmongoにfetchしてemailをキーにnameを取得
+  // １レコードごとにfetchするのって処理重い？そしたらpinia?
 })
 
 // 承認ボタン true/false切り替え

@@ -21,15 +21,26 @@ app.get('/userData', (req, res) => {
   const { email, pass, id } = req.query
 
   if (email) {
-    // メールアドレスを検索条件としてデータを取得するハンドラ
-    GetUserList.find({ email: email })
-      .then((result) => {
-        return res.json(result)
-      })
-      .catch((err) => {
-        console.error(err)
-        return res.status(500).send('取得できませんでした')
-      })
+    if (email === '*') {
+      GetUserList.find()
+        .then((result) => {
+          return res.json(result)
+        })
+        .catch((err) => {
+          console.error(err)
+          return res.status(500).send('取得できませんでした')
+        })
+    } else {
+      // メールアドレスを検索条件としてデータを取得するハンドラ
+      GetUserList.find({ email: email })
+        .then((result) => {
+          return res.json(result)
+        })
+        .catch((err) => {
+          console.error(err)
+          return res.status(500).send('取得できませんでした')
+        })
+    }
   } else if (pass && id) {
     // パスワードとIDを検索条件としてデータを取得するハンドラ
     ChangePass.find({ $and: [{ password: pass }, { _id: id }] })
@@ -46,17 +57,27 @@ app.get('/userData', (req, res) => {
 })
 
 app.post('/userData', (req, res) => {
-  const { id, newPass } = req.body
+  const { id, newPass, newRole } = req.body
 
   if (id && newPass) {
     // パスワードを変更する処理
-    ChangePass.findByIdAndUpdate(id, { password: newPass },{ new: true })
+    ChangePass.findByIdAndUpdate(id, { password: newPass }, { new: true })
       .then((result) => {
         return res.json(result)
       })
       .catch((err) => {
         console.error(err)
         return res.status(500).send('パスワードの変更に失敗しました')
+      })
+  } else if (id && newRole) {
+    // roleを変更する処理
+    ChangePass.findByIdAndUpdate(id, { role: newRole }, { new: true })
+      .then((result) => {
+        return res.json(result)
+      })
+      .catch((err) => {
+        console.error(err)
+        return res.status(500).send('roleの変更に失敗しました')
       })
   } else {
     // 新しいユーザーを作成する処理

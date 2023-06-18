@@ -1,18 +1,65 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import getMonthlyDate from '@/lib/getMonthlyDate'
+import { ref, onMounted, watch, reactive } from 'vue';
+// import getMonthlyDate from '@/lib/getMonthlyDate'
 import getAttendanceData from '@/lib/getWorkData';
+import { useSelectedDateStore } from '@/stores/selectedDate'
+import { useUpdateMonthStore } from '@/stores/updateMonth'
+import { useRouter } from 'vue-router';
 
-// 日付の一覧データ
-const calendar = getMonthlyDate();
-// console.log(calendar);
+const store = reactive(useUpdateMonthStore())
+const router = useRouter()
+
+
+// 日付の一覧を取得する
+const getMonthlyDate = () => {
+    // 今日
+    const today = ref(store.newToday)
+    console.log(today.value)
+
+    // 曜日
+    const days = ['日', '月', '火', '水', '木', '金', '土'];
+    // 月初
+    const firstDay = ref(new Date(today.value.getFullYear(), today.value.getMonth(), 1))
+    // console.log(firstDay)
+    // 月末
+    const lastDay = ref(new Date(today.value.getFullYear(), today.value.getMonth() + 1, 0))
+
+    
+    // 当月の月初から月末までの日付を取得する
+    const currentDate = firstDay
+    const monthlyDatesArray: any = []
+    while (currentDate.value <= lastDay.value) {
+        let monthlyDate =
+            currentDate.value.getFullYear() +
+            '-' +
+            (currentDate.value.getMonth() + 1).toString().padStart(2, '0') +
+            '-' +
+            currentDate.value.getDate().toString().padStart(2, '0') +
+            '(' + days[currentDate.value.getDay()] + ')';
+        monthlyDatesArray.push(monthlyDate)
+        currentDate.value.setDate(currentDate.value.getDate() + 1)
+    }
+    // console.log(monthlyDatesArray)
+    return monthlyDatesArray;
+}
+
+watch(() => store.newToday, () => {
+    getMonthlyDate()
+})
 
 // 日付のみ
-const dateArray = calendar.map((date: any) => date.slice(0, 10))
+const dateArray = getMonthlyDate().map((date: any) => date.slice(0, 10))
 // console.log(dateArray)
 // 曜日のみ
-const dayArray = calendar.map((date: any) => date.slice(-3))
+const dayArray = getMonthlyDate().map((date: any) => date.slice(-3))
 // console.log(dayArray)
+
+// 日付をクリックするとdateの値をstoreに保持し、日次勤怠へ遷移する
+function handleDateClick(date: any) {
+    const dateStore = useSelectedDateStore();
+    dateStore.setSelectedDate(date);
+    router.push({ path: '/dayWork' });
+}
 
 // 勤怠データ
 const attendanceData = ref([] as any[]);
@@ -43,19 +90,18 @@ function getRest(date: any) {
 </script>
 
 <template>
-    <h2 class="pageTitle">月次勤怠データ</h2>
     <div class="table">
         <div class="colum">
             <div class="label">
                 <label for="date">日付</label>
             </div>
-            <div class="content" v-for=" date in dateArray" :key="date">
+            <div class="content" id="date" v-for=" date in dateArray" :key="date" @click="handleDateClick(date)">
                 <p>{{ date }}</p>
             </div>
         </div>
         <div class="colum" id="colum">
             <div class="label">
-                <label for="date">曜日</label>
+                <label for="day">曜日</label>
             </div>
             <div class="content" v-for="day in dayArray" :key="day">
                 <p>{{ day }}</p>
@@ -97,16 +143,6 @@ function getRest(date: any) {
 </template>
 
 <style scoped>
-.pageTitle {
-    width: max-content;
-    margin-bottom: 10px;
-    padding: 0 5px;
-    border: 1px solid #977A58;
-    border-radius: 5px;
-    background-color: #F6E9D8;
-    color: #977A58;
-}
-
 .table {
     display: flex;
     flex-direction: row;
@@ -130,5 +166,10 @@ function getRest(date: any) {
 
 #colum {
     border-left: 1px solid #000;
+}
+
+#date:hover {
+    cursor: pointer;
+    opacity: 0.6;
 }
 </style>
