@@ -1,14 +1,66 @@
 <script setup lang="ts">
-import { getApprovedData } from "@/lib/getApprovedData";
+import firebase from '../firebase'
+import { getAuth } from 'firebase/auth'
+import { getApprovedDataByGM, getApprovedDataByHRD, getApprovedDataByGAD, getApprovedDataByDD } from "@/lib/getApprovedData";
 import { ref, onMounted } from 'vue';
+import { getUserList } from '@/lib/getUserList'
 
-// 承認済み勤怠データを表示する
-const approvedData = ref([]as any[]);
+const auth = getAuth(firebase)
+const currentUserEmail = auth.currentUser?.email
+// console.log(currentUserEmail)
 
+const department = ref('')
+const role = ref('')
+
+// emailをキーにしてログインユーザーの権限・部署を取得する(mongoDB)
+const getUserDepartmentAndRole = async () => {
+    try {
+        const response = await fetch(`http://localhost:3000/userData?email=${currentUserEmail}`)
+        const userData = await response.json();
+        department.value = userData[0].department
+        // console.log(department.value)
+        role.value = userData[0].role
+        // console.log(role.value)
+    } catch (error) {
+        console.log('失敗', error)
+    }
+}
+getUserDepartmentAndRole()
+
+// 承認済み勤怠データ一覧
+const approvedData = ref([] as any[]);
+
+// 権限と部署の値によって表示するデータを取得する
 onMounted(async () => {
-    approvedData.value = await getApprovedData()
-    console.log(approvedData.value);
+    await getUserDepartmentAndRole()
+    // console.log(role)
+    if (role.value === 'GM') {
+        approvedData.value = await getApprovedDataByGM()
+    } else if (role.value === 'Admin') {
+        if (department.value === '総務') {
+            approvedData.value = await getApprovedDataByGAD()
+        } else if (department.value === '人事') {
+            approvedData.value = await getApprovedDataByHRD()
+        } else {
+            approvedData.value = await getApprovedDataByDD()
+        }
+    }
 })
+
+
+const userList = ref([] as any[])
+// ユーザー情報一覧を取得する
+onMounted(async () => {
+    userList.value = await getUserList()
+})
+
+const getUserName = (email: any) => {
+    const user = userList.value.find((data) => data.email === email)
+    console.log(approvedData.value)
+    console.log(userList.value)
+    return user ? user.name : '-'
+}
+
 </script>
 
 <template>
@@ -19,15 +71,15 @@ onMounted(async () => {
                 <div class="label">
                     <label for="userName">ユーザ名</label>
                 </div>
-                <div class="content">
-                    <!-- <p>{{ value }}</p> -->
+                <div class="content" v-for="(data, index) in approvedData" :key="index">
+                    <p>{{ getUserName(data.email) }}</p>
                 </div>
             </div>
             <div class="colum">
                 <div class="label">
                     <label for="date">日付</label>
                 </div>
-                <div class="content" v-for="(data, index) in approvedData" :key="index">
+                <div class="content" id="content" v-for="(data, index) in approvedData" :key="index">
                     <p>{{ data.date }}</p>
                 </div>
             </div>
@@ -77,13 +129,13 @@ onMounted(async () => {
 
 <style scoped>
 .pageTitle {
-  width: max-content;
-  margin: 10px 0;
-  padding: 0 5px;
-  border: 1px solid #977a58;
-  border-radius: 5px;
-  background-color: #f6e9d8;
-  color: #977a58;
+    width: max-content;
+    margin: 10px 0;
+    padding: 0 5px;
+    border: 1px solid #977a58;
+    border-radius: 5px;
+    background-color: #f6e9d8;
+    color: #977a58;
 }
 
 .table {

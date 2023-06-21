@@ -1,11 +1,11 @@
 import firebase from '@/firebase'
 import { getAuth } from 'firebase/auth'
 
-const auth = getAuth(firebase)
-const currentUserEmail = auth.currentUser?.email
-console.log(currentUserEmail)
 
 async function getAttendanceData() {
+  const auth = getAuth(firebase)
+  const currentUserEmail = auth.currentUser?.email
+  console.log(currentUserEmail)
   try {
     const response = await fetch(
       `https://td2a0be3bj.execute-api.us-east-2.amazonaws.com/daywork`, {

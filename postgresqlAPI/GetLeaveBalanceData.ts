@@ -4,20 +4,18 @@ const express = require('express')
 const router = express.Router()
 const app = express()
 
-app.use(express.json())
+app.use(express.json()) //リクエストのボディ内のJSONデータを解析し、JavaScriptオブジェクトに変換するためのミドルウェア関数
 const prisma = new PrismaClient()
 
 // middleware that is specific to this router
 router.get('/', async (req: Request, res: Response) => {
-  console.log(req.body)
-  const { email, date } = req.body
   try {
-    const dayWork = await prisma.attendance.create({ data: { email, date } })
-    return res.json({ dayWork })
+    const leaveBalance = await prisma.leave_balance.findMany()
+    return res.json(leaveBalance)
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
       if (e.code === 'P2002') {
-        console.log('エラーが発生しました')
+        console.log('エラーが起きています')
       }
     }
     return res.status(400).json(e)
