@@ -7,7 +7,7 @@ const week = today.getDay();
 const days = ['日', '月', '火', '水', '木', '金', '土'];
 const dayOfWeek = '(' + days[week] + ')';
 console.log(dayOfWeek);
-const currentDate = today.getFullYear() + '年' + (today.getMonth() + 1) + '月' + today.getDate() + '日' + dayOfWeek
+const currentDate = today.getFullYear() + '/' + (today.getMonth() + 1) + '/' + today.getDate() + dayOfWeek
 
 // 現在時刻
 const currentTime = ref(new Date().toLocaleTimeString());
@@ -22,8 +22,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="wrap" id="app">
-        <table border="1" style="border-collapse: collapse">
+        <table border="1" style="border-collapse: collapse" class="clock">
             <thead>
                 <tr>
                     <th class="title">現在時刻</th>
@@ -38,15 +37,11 @@ onMounted(() => {
                 </tr>
             </tbody>
         </table>
-    </div>
 </template>
 
 <style scoped>
-.wrap {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+.clock {
+    width: 250px;
 }
 
 thead tr {
@@ -60,7 +55,7 @@ tbody tr {
 
 .today,
 .now {
-    width: 280px;
+    /* width: 250px; */
     font-size: 25px;
     text-align: center;
 }

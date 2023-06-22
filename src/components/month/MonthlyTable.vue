@@ -14,7 +14,7 @@ const router = useRouter()
 const getMonthlyDate = () => {
     // 今日
     const today = ref(store.newToday)
-    console.log(today.value)
+    // console.log(today.value)
 
     // 曜日
     const days = ['日', '月', '火', '水', '木', '金', '土'];
