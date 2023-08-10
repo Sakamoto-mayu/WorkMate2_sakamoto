@@ -56,7 +56,7 @@ async function checkUser() {
 checkUser()
 
 //   DynamoDB から取得
-async function getBeforeAdmin() {
+async function getWorkData() {
   await checkUser()
   if (role.value === 'admin') {
     const response = await fetch('https://td2a0be3bj.execute-api.us-east-2.amazonaws.com/daywork', {
@@ -90,14 +90,14 @@ async function getBeforeAdmin() {
 
 // 画面表示用
 onMounted(async () => {
-  const workData = await getBeforeAdmin()
+  const workData = await getWorkData()
   console.log(workData.Items)
   dataLists.value = workData.Items
   // ユーザー名取得、この中でmongoにfetchしてemailをキーにnameを取得
   // １レコードごとにfetchするのって処理重い？そしたらpinia?
 })
 
-// 承認ボタン
+// 承認ボタン true/false切り替え
 const approveWork = async (list) => {
   let admin, gm
   if (list.admin === true) {

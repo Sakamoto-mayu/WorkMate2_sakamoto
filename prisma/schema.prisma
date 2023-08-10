@@ -9,13 +9,13 @@ datasource db {
 
 model Attendance {
   id       Int     @id @default(autoincrement())
-  email    String
-  month    String?
-  date     String?
-  day      String?
-  status   String?
   clockIn  String?
   clockOut String?
+  date     String?
+  status   String?
+  day      String?
+  email    String
+  month    String?
   rest     String?
 }
 
